@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main_layout}">
+
+<head>
+    <title>DropWin - 배송 정보 입력 및 결제</title>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="img/apple-icon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/templatemo.css">
+    <link rel="stylesheet" href="css/custom.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="css/fontawesome.min.css">
+
+    <script src="https://kit.fontawesome.com/47be2e00b6.js" crossorigin="anonymous"></script>
+    </head>
+
+<body>
+    <th:block layout:fragment="content">
+        <div class="container py-5">
+            <div class="row text-center pt-3">
+                <div class="col-lg-8 m-auto">
+                    <h1 class="h2 fw-semibold">배송 정보 입력 및 결제</h1>
+                    <p class="text-muted">낙찰된 물품을 수령하기 위한 배송 정보를 입력하고 결제를 진행해주세요.</p>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-lg-8 m-auto">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">낙찰 물품 정보</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="img/shop_02.jpg" class="img-fluid rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" alt="아디다스 런닝화">
+                                <div>
+                                    <h4 class="mb-1">아디다스 런닝화</h4>
+                                    <p class="text-muted mb-0">낙찰가: <span class="text-success fw-bold fs-5">120,000원</span></p>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">배송지 정보</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="deliveryPaymentForm" action="/process-payment" method="post">
+                                <div class="mb-3">
+                                    <label for="receiverName" class="form-label fw-semibold">수령인 이름 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="receiverName" name="receiverName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="contactNumber" class="form-label fw-semibold">연락처 <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="contactNumber" name="contactNumber" placeholder="010-1234-5678" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="postcode" class="form-label fw-semibold">우편번호 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="postcode" name="postcode" placeholder="00000" required readonly>
+                                        <button class="btn btn-outline-dark" type="button" id="searchPostcode">우편번호 검색</button>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label fw-semibold">주소 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="address" name="address" required readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="detailAddress" class="form-label fw-semibold">상세 주소 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="detailAddress" name="detailAddress" placeholder="아파트 동/호수 또는 빌딩 층수 등" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deliveryRequest" class="form-label fw-semibold">배송 요청 사항</label>
+                                    <textarea class="form-control" id="deliveryRequest" name="deliveryRequest" rows="3" placeholder="문 앞에 놓아주세요, 경비실에 맡겨주세요 등"></textarea>
+                                </div>
+
+                                <hr class="my-4">
+
+                                <h5>결제 정보</h5>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">결제 수단 <span class="text-danger">*</span></label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" value="creditCard" checked>
+                                            <label class="form-check-label" for="creditCard">신용카드</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="kakaopay" value="kakaopay">
+                                            <label class="form-check-label" for="kakaopay">카카오페이</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="naverpay" value="naverpay">
+                                            <label class="form-check-label" for="naverpay">네이버페이</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="bankTransfer" value="bankTransfer">
+                                            <label class="form-check-label" for="bankTransfer">무통장 입금</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="creditCardDetails" class="p-3 border rounded mb-3">
+                                    <h6>신용카드 정보 입력</h6>
+                                    <div class="mb-3">
+                                        <label for="cardNumber" class="form-label">카드 번호:</label>
+                                        <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="xxxx-xxxx-xxxx-xxxx" pattern="[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}" title="하이픈을 포함하여 입력해주세요." maxlength="19">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="expiryDate" class="form-label">유효기간 (MM/YY):</label>
+                                            <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY" pattern="(0[1-9]|1[0-2])\/?([0-9]{2})" title="월/년 형식으로 입력해주세요. (예: 12/25)" maxlength="5">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cvc" class="form-label">CVC/CVV:</label>
+                                            <input type="password" class="form-control" id="cvc" name="cvc" placeholder="XXX" maxlength="4">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cardPassword" class="form-label">카드 비밀번호 앞 2자리:</label>
+                                        <input type="password" class="form-control" id="cardPassword" name="cardPassword" placeholder="**" maxlength="2">
+                                    </div>
+                                </div>
+
+                                <hr class="my-4">
+
+                                <div class="payment-summary border p-3 rounded bg-light">
+                                    <h5 class="mb-3">결제 요약</h5>
+                                    <p class="d-flex justify-content-between">총 낙찰가: <span class="fw-bold">120,000원</span></p>
+                                    <p class="d-flex justify-content-between">배송비: <span class="fw-bold">3,000원</span></p>
+                                    <p class="d-flex justify-content-between fs-4 text-danger fw-bold">총 결제 금액: <span>123,000원</span></p>
+                                    </div>
+
+                                <div class="d-grid gap-2 mt-4">
+                                    <button type="submit" class="btn btn-success btn-lg">결제하기</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <script src="//t1.daumcdn.net/maplink/maplink.js"></script>
+    <script src="//t1.daumcdn.net/map_js_init/postcode.v2.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"        
+    layout:decorate="~{layouts/main_layout}">
+
+<head>
+    <title th:text="${item.name + ' - 상품 상세'}">DropWin - 상품 상세 페이지</title>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="apple-touch-icon" href="img/apple-icon.png">
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/templatemo.css">
+<link rel="stylesheet" href="css/custom.css">
+<link rel="stylesheet" href="css/chatbot.css">
+
+<!-- Load fonts style after rendering the layout styles -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+<link rel="stylesheet" th:href="@{/css/fontawesome.min.css}">
+
+<script src="https://kit.fontawesome.com/47be2e00b6.js"
+	crossorigin="anonymous"></script>
+</head>
+
+<body>
+<div layout:fragment="content" class="container pb-5 mt-4">
+    <div class="row align-items-stretch">
+        <div class="col-lg-5 mt-5 h-100">
+            <div class="card mb-3 h-100">
+                <img class="card-img img-fluid" th:src="@{${mainImageUrl}}" th:alt="${item.name}" id="product-detail">
+            </div>
+            <div class="mt-3 d-flex flex-wrap gap-2 justify-content-center">
+                <th:block th:if="${otherImageUrls != null and !#lists.isEmpty(otherImageUrls)}">
+                    <div th:each="imgUrl : ${otherImageUrls}">
+                        <a href="#" class="small-img-link"> <img th:src="@{${imgUrl}}" alt="서브 이미지" class="img-thumbnail" style="width: 100px; height: auto; cursor: pointer;"/>
+                        </a>
+                    </div>
+                </th:block>
+                <div th:if="${otherImageUrls == null or #lists.isEmpty(otherImageUrls)}" class="text-muted">
+                    추가 이미지가 없습니다.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7 mt-5 h-100">
+            <div class="card p-4">
+                <div class="card-body">
+                    <h1 class="h2 mb-4" th:text="${item.name}">상품명</h1>
+                    
+                    <div class="mb-3 d-flex justify-content-between">
+                        <span class="fw-bold">현재 입찰 가격</span>
+                        <span class="fs-4 fw-bold" th:text="${#numbers.formatInteger(item.currentPrice ?: item.startPrice, 0, 'COMMA')} + '원'"></span>
+                    </div>
+
+                    <div th:if="${item.buyNowPrice != null}" class="mb-2 d-flex justify-content-between">
+                        <span>즉시 구매 가격</span>
+                        <span class="fs-5 fw-bold text-success" th:text="${#numbers.formatInteger(item.buyNowPrice, 0, 'COMMA')} + '원'"></span>
+                    </div>
+
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span>남은시간</span>
+                        <div class="text-end">
+                            <div class="fw-bold" id="remainingTime"></div> <small class="text-muted" th:text="'(' + ${#temporals.format(item.endTime, 'yyyy년 MM월 dd일 HH:mm:ss')} + ')'"></small>
+                        </div>
+                    </div>
+
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span>경매번호</span>
+                        <span th:text="${item.id}">2507R22QFAJ</span> </div>
+
+                    <div class="mb-2 d-flex justify-content-between align-items-center">
+                        <span>입찰기록</span>
+                        <span>
+                            <a href="#" class="text-decoration-none" th:text="'[' + ${item.bidCount} + '회]'">[45회]</a>
+                            &nbsp;
+                            <button type="button" class="btn btn-link p-0 align-baseline" id="viewBidHistoryBtn" data-bs-toggle="modal" data-bs-target="#bidHistoryModal" style="text-decoration:none; color:black;">
+                                [기록보기]
+                            </button>
+                        </span>
+                    </div>
+                    
+                    <div class="modal fade" id="bidHistoryModal" tabindex="-1" aria-labelledby="bidHistoryModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header bg-dark text-white">
+                                    <h5 class="modal-title" id="bidHistoryModalLabel">입찰 기록</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">순번</th>
+                                                <th scope="col">입찰자</th> <th scope="col">입찰가</th>
+                                                <th scope="col">입찰 시간</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="bidHistoryTableBody">
+                                            </tbody>
+                                    </table>
+                                    <div id="noBidHistoryMessage" class="text-center text-muted" style="display:none;">
+                                        입찰 기록이 없습니다.
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span>입찰단위</span>
+                        <span id="bidUnit">1,000원</span> </div>
+
+                    <form action="#" method="POST" id="bidForm" class="mb-3">
+                        <div class="mb-2 d-flex align-items-center justify-content-between">
+                            <label for="bid-price" class="mb-0">희망 입찰가</label>
+                            <div class="input-group" style="width: 180px;">
+                                <button type="button" class="btn btn-outline-secondary" id="btn-minus">−</button>
+                                <input type="text" class="form-control text-center" id="bid-price" name="bidPrice" th:value="${#numbers.formatInteger((item.currentPrice ?: item.startPrice) + 1000, 0, 'COMMA')} + ' 원'" readonly>
+                                <button type="button" class="btn btn-outline-secondary" id="btn-plus">+</button>
+                                <input type="hidden" id="currentMinBid" th:value="${(item.currentPrice ?: item.startPrice) + 1000}"> </div>
+                        </div>
+
+                        <div class="mb-2 d-flex justify-content-between">
+                            <span>예상 구매가</span>
+                            <div class="text-end">
+                                <div class="fw-bold" id="expectedTotalPrice"></div> <small class="text-muted" id="commissionDetail">(81,000원 + 구매수수료 8,010원)</small>
+                            </div>
+                        </div>
+
+                        <div class="row pb-3 mt-4">
+                            <div class="col-12 d-grid mb-3">
+                                <button type="button" class="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target="#bidModal">
+                                    입찰하기
+                                </button>
+                            </div>
+                            
+                            <div class="col d-grid" th:if="${item.buyNowPrice != null}">
+                                <button type="button" class="btn btn-dark btn-lg" id="buyNowBtn" data-bs-toggle="modal" data-bs-target="#buyNowModal">
+                                    즉시 구매하기
+                                </button>
+                            </div>
+                            <div class="col d-grid" th:unless="${item.buyNowPrice != null}">
+                                <button type="button" class="btn btn-secondary btn-lg" disabled>
+                                    즉시 구매 불가
+                                </button>
+                            </div>
+                            
+                            <div class="col d-grid">
+                                <button type="button" class="btn btn-dark btn-lg d-flex align-items-center justify-content-center gap-2"
+                                        data-bs-toggle="modal" data-bs-target="#favoriteModal">
+                                    <i class="fa fa-fw fa-heart"></i>
+                                    <span>관심경매</span>
+                                </button>
+                            </div>
+                            
+                            
+                            <div class="modal fade" id="bidModal" tabindex="-1" aria-labelledby="bidModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-dark text-white">
+                                            <h5 class="modal-title" id="bidModalLabel">입찰 관련 중요 안내</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                <b>입찰 실수 및 허위 입찰</b>은 거래상 문제로 이어질 수 있으며,
+                                                <b>미입금, 구매 취소, 반품 오류 등 거래 관련 문제가</b> 2건 이상 누적될 경우 사이트 이용 제한 및 사고 수수료가 부과될 수 있습니다.
+                                                따라서 물품 이미지와 설명을 신중히 확인하시고 입찰해주시기 바랍니다.
+                                            </p>
+                                            <div class="border rounded p-3 my-3 text-center">
+                                                <strong>입찰 희망 금액: </strong> <span class="fw-bold" id="modalBidPrice">0원</span>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" id="confirmBidBtn">신중하게 입찰하기</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="modal fade" id="buyNowModal" tabindex="-1" aria-labelledby="buyNowModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-dark text-white">
+                                            <h5 class="modal-title" id="buyNowModalLabel">즉시 구매 확인</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <p class="fs-5 fw-bold">정말 즉시 구매 가격으로 바로 구매하시겠습니까?</p>
+                                            <p>즉시 구매가 완료되면 경매는 즉시 종료됩니다.</p>
+                                            <div class="border rounded p-3 my-3">
+                                                <strong>즉시 구매 금액: </strong>
+                                                <span class="fs-4 fw-bold text-success" th:text="${#numbers.formatInteger(item.buyNowPrice, 0, 'COMMA')} + '원'"></span>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" id="confirmBuyNowBtn">즉시 구매하기</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="favoriteModal" tabindex="-1" aria-labelledby="favoriteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-dark text-white">
+                                            <h5 class="modal-title" id="favoriteModalLabel">관심경매 등록</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="fw-bold mb-2">관심경매 등록이 완료되었습니다.</p>
+                                            <p class="text-muted">마이페이지 > 관심경매 목록에서 확인할 수 있습니다.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">확인</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                    </form>
+
+                    <div class="card p-3 mb-4 shadow-sm">
+                        <div class="row align-items-center mb-3">
+                            <div class="col-auto" style="color: #495057;">판매자</div>
+                            <div class="col-auto">
+                                <span class="fw-bold fs-5 me-2" th:text="${sellerName}">판매자명</span>
+                            </div>
+                        </div>
+                        <div class="row gx-2">
+                            <div class="col d-grid">
+                                <button type="button" class="btn btn-secondary btn-lg" id="chatWithSellerBtn"
+                                        th:attr="data-seller-id=${item.sellerId}"> 판매자 채팅하기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="my-5"></div>
+    <div class="py-2"></div>
+
+    <ul class="nav nav-tabs justify-content-center" id="productTab" role="tablist" style="margin-left:0;">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true" style="padding: 0.5rem 1.2rem;">
+                상품정보
+            </button>
+        </li>
+    </ul>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row text-left p-2 pb-3">
+                <h4>연관 상품</h4>
+            </div>
+
+            <div class="row">
+                <th:block th:if="${relatedProducts == null or #lists.isEmpty(relatedProducts)}">
+                    <div class="col-12 text-center py-3">
+                        <p class="text-muted fs-6">연관 상품이 없습니다.</p>
+                    </div>
+                </th:block>
+                <th:block th:unless="${relatedProducts == null or #lists.isEmpty(relatedProducts)}">
+                    <div class="col-md-4" th:each="related : ${relatedProducts}">
+                        <div class="card mb-4 product-wap rounded-0">
+                            <div class="card rounded-0">
+                                <a th:href="@{'/item/' + ${related.id}}">
+                                    <img class="card-img rounded-0 img-fluid"
+                                         th:src="${#lists.isEmpty(related.getImagePathList()) ?
+                                         '/img/no_image_available.png' :
+                                         '/auction_uploads/' + related.getImagePathList().get(0)}"
+                                         th:alt="${related.name}">
+                                </a>
+                                <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                                    <a class="btn btn-light text-dark rounded-circle shadow-sm" th:href="@{'/item/' + ${related.id}}">
+                                        <i class="far fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            const itemId = /*[[${item.id}]]*/ 0;
+            const initialCurrentPrice = /*[[${item.currentPrice ?: item.startPrice}]]*/ 0;
+            const buyNowPrice = /*[[${item.buyNowPrice}]]*/ null;
+            const bidUnit = 1000;
+            const commissionRate = 0.08;
+            const endTimeStr = /*[[${#temporals.format(item.endTime, 'yyyy-MM-dd HH:mm:ss')}]]*/ '2025-12-31 23:59:59';
+            const itemEndTime = new Date(endTimeStr.replace(/-/g, '/'));
+            
+            let currentBidPrice = initialCurrentPrice + bidUnit;
+            const bidPriceInput = $('#bid-price');
+            const incrementBtn = $('#btn-plus');
+            const decrementBtn = $('#btn-minus');
+            const confirmBidBtn = $('#confirmBidBtn');
+            const minBidPrice = initialCurrentPrice + bidUnit;
+
+            function formatNumber(num) {
+                return new Intl.NumberFormat('ko-KR').format(num);
+            }
+
+            function updateBidInfo() {
+                const formattedBidPrice = formatNumber(currentBidPrice);
+                bidPriceInput.val(formattedBidPrice + ' 원');
+
+                const commission = Math.round(currentBidPrice * commissionRate);
+                const expectedTotal = currentBidPrice + commission;
+                $('#expectedTotalPrice').text(formatNumber(expectedTotal) + '원');
+                $('#commissionDetail').text('(' + formattedBidPrice + '원 + 구매수수료 ' + formatNumber(commission) + '원)');
+
+                $('#modalBidPrice').text(formattedBidPrice + '원');
+                
+                if (currentBidPrice <= minBidPrice) {
+                     decrementBtn.prop('disabled', true);
+                } else {
+                     decrementBtn.prop('disabled', false);
+                }
+            }
+
+            function numberToKorean(number) {
+                const units = ['', '만', '억', '조'];
+                const numStr = number.toString();
+                let result = [];
+                let unitIndex = 0;
+
+                for (let i = numStr.length; i > 0; i -= 4) {
+                    let chunk = numStr.substring(Math.max(0, i - 4), i);
+                    let parsedChunk = parseInt(chunk, 10);
+
+                    if (parsedChunk > 0) {
+                        result.unshift(formatNumber(parsedChunk) + units[unitIndex]);
+                    }
+                    unitIndex++;
+                }
+                return result.join(' ').trim();
+            }
+            
+            incrementBtn.on('click', function() {
+                if (buyNowPrice !== null && currentBidPrice + bidUnit > buyNowPrice) {
+                    showAlert("이미 즉시구매가입니다. 즉시구매가보다 높게 금액을 올릴 수 없습니다.", "warning");
+                    return;
+                }
+                
+                currentBidPrice += bidUnit;
+                updateBidInfo();
+            });
+
+            decrementBtn.on('click', function() {
+                if (currentBidPrice - bidUnit >= minBidPrice) {
+                    currentBidPrice -= bidUnit;
+                    updateBidInfo();
+                }
+            });
+            
+            bidPriceInput.on('input', function() {
+                let sanitizedValue = parseInt($(this).val().replace(/[^0-9]/g, ''));
+                
+                if (isNaN(sanitizedValue) || sanitizedValue === '') {
+                    sanitizedValue = minBidPrice;
+                }
+
+                if (buyNowPrice !== null && sanitizedValue > buyNowPrice) {
+                    showAlert("입찰 금액이 즉시구매가(" + formatNumber(buyNowPrice) + "원)를 초과할 수 없습니다.", "warning");
+                    updateBidInfo();
+                    return;
+                } else if (sanitizedValue < minBidPrice) {
+                    showAlert('입찰 금액은 현재 최고 입찰가(' + formatNumber(initialCurrentPrice) + '원)보다 높아야 합니다.', 'warning');
+                    updateBidInfo();
+                    return;
+                }
+                
+                currentBidPrice = sanitizedValue;
+                updateBidInfo();
+            });
+
+            updateBidInfo();
+            
+            $('#viewBidHistoryBtn').on('click', function() {
+                $.ajax({
+                    url: '/bids/history/' + itemId,
+                    type: 'GET',
+                    success: function(response) {
+                        const tbody = $('#bidHistoryTableBody');
+                        tbody.empty();
+
+                        if (response && response.length > 0) {
+                            $('#noBidHistoryMessage').hide();
+                            response.forEach((bid, index) => {
+                                const bidTimeFormatted = new Date(bid.bidTime).toLocaleString('ko-KR', {
+                                    year: 'numeric', month: '2-digit', day: '2-digit',
+                                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                                });
+                                const tr = `
+                                    <tr>
+                                        <th scope="row">${index + 1}</th>
+                                        <td>${bid.userName}</td> <td>${formatNumber(bid.bidPrice)}원</td>
+                                        <td>${bidTimeFormatted}</td>
+                                    </tr>
+                                `;
+                                tbody.append(tr);
+                            });
+                        } else {
+                            tbody.append('<tr><td colspan="4" class="text-center text-muted">입찰 기록이 없습니다.</td></tr>');
+                            $('#noBidHistoryMessage').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("입찰 기록 불러오기 실패:", status, error);
+                        alert("입찰 기록을 불러오는 데 실패했습니다.");
+                        $('#noBidHistoryMessage').show();
+                    }
+                });
+            });
+
+            function updateRemainingTime() {
+                const now = new Date();
+                const diff = itemEndTime.getTime() - now.getTime();
+
+                if (diff <= 0) {
+                    $('#remainingTime').text('경매 종료');
+                    $('#btn-minus, #btn-plus, [data-bs-target="#bidModal"], #buyNowBtn').prop('disabled', true);
+                    $('#confirmBidBtn, #confirmBuyNowBtn').prop('disabled', true);
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                let timeString = '';
+                if (days > 0) timeString += days + '일 ';
+                timeString += `${hours.toString().padStart(2, '0')}시간 ${minutes.toString().padStart(2, '0')}분 ${seconds.toString().padStart(2, '0')}초`;
+                $('#remainingTime').text(timeString);
+            }
+
+            setInterval(updateRemainingTime, 1000);
+            updateRemainingTime();
+
+            $('#bidModal').on('show.bs.modal', function (event) {
+                updateBidInfo();
+            });
+
+            $('#confirmBidBtn').on('click', function() {
+                $(this).prop('disabled', true).text('입찰 처리 중...'); 
+
+                $.ajax({
+                    url: '/bids/place',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        itemId: itemId,
+                        bidPrice: currentBidPrice
+                    }),
+                    success: function(response) {
+                        $('#bidModal').modal('hide');
+                        if (response.success) {
+                            alert(response.message);
+                            window.location.href = '/reservation';
+                        } else {
+                            alert('입찰 실패: ' + response.message);
+                            $('#confirmBidBtn').prop('disabled', false).text('신중하게 입찰하기');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#bidModal').modal('hide');
+                        const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "서버 오류가 발생했습니다.";
+                        alert('입찰 처리 중 오류 발생: ' + errorMessage);
+                        console.error("AJAX Error:", status, error, xhr.responseText);
+                        $('#confirmBidBtn').prop('disabled', false).text('신중하게 입찰하기');
+                    }
+                });
+            });
+
+            // 즉시 구매하기 버튼 클릭 시 처리
+            $('#confirmBuyNowBtn').on('click', function() {
+                const buyNowPrice = /*[[${item.buyNowPrice}]]*/ null;
+                if (!buyNowPrice) {
+                    alert('즉시 구매 가격이 설정되지 않았습니다.');
+                    return;
+                }
+
+                $(this).prop('disabled', true).text('구매 처리 중...');
+
+                $.ajax({
+                    url: '/bids/place',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        itemId: itemId,
+                        bidPrice: buyNowPrice
+                    }),
+                    success: function(response) {
+                        $('#buyNowModal').modal('hide');
+                        if (response.success) {
+                            alert(response.message);
+                            window.location.href = '/reservation';
+                        } else {
+                            alert('구매 실패: ' + response.message);
+                            $('#confirmBuyNowBtn').prop('disabled', false).text('즉시 구매하기');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#buyNowModal').modal('hide');
+                        const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "서버 오류가 발생했습니다.";
+                        alert('구매 처리 중 오류 발생: ' + errorMessage);
+                        console.error("AJAX Error:", status, error, xhr.responseText);
+                        $('#confirmBuyNowBtn').prop('disabled', false).text('즉시 구매하기');
+                    }
+                });
+            });
+
+            $('.small-img-link img').on('click', function() {
+                const newSrc = $(this).attr('src');
+                $('#product-detail').attr('src', newSrc);
+            });
+            
+            $('#chatWithSellerBtn').on('click', function() {
+                const sellerId = $(this).data('seller-id');
+                if (sellerId && sellerId.trim() !== '') {
+                    window.location.href = `/chat?partnerId=${sellerId}`;
+                } else {
+                    alert('판매자 정보를 찾을 수 없어 채팅을 시작할 수 없습니다.');
+                    console.error('채팅 시작 실패: sellerId가 유효하지 않음', sellerId);
+                }
+            });
+
+            function showAlert(message, type) {
+                alert(message);
+            }
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

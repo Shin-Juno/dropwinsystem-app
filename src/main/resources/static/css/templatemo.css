@@ -1,0 +1,1064 @@
+/*
+
+TemplateMo 559 Zay Shop
+
+https://templatemo.com/tm-559-zay-shop
+
+---------------------------------------------
+Table of contents
+------------------------------------------------
+1. Typography
+2. General
+3. Nav
+4. Hero Carousel
+5. Accordion
+6. Shop
+7. Product
+8. Carousel Hero
+9. Carousel Brand
+10. Services
+11. Contact map
+12. Footer
+13. Small devices (landscape phones, 576px and up)
+14. Medium devices (tablets, 768px and up)
+15. Large devices (desktops, 992px and up)
+16. Extra large devices (large desktops, 1200px and up)
+--------------------------------------------- */
+
+/*	커뮤니티 css 윤상	*/
+
+
+.community-menu-section {
+    border-right: 1px solid #eee;
+}
+
+.community-menu-section h3 {
+    font-weight: 400;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.community-menu-section .templatemo-accordion li {
+    margin-bottom: 12px;
+}
+
+.thead-light {
+	border-top: 1px solid black;
+	border-bottom: 1px solid lightgrey;
+	border-left: none;
+	border-right: none;
+	background-color: rgb(248, 248, 248);
+	color: #495057;
+}
+
+.table.table-bordered {
+	border-left: none;
+	border-right: none;
+}
+
+.table thead th {
+	padding: 10px;
+	font-weight: normal;
+	border-left: none;
+	border-right: none;
+	font-size: 0.8em;
+}
+
+.table tbody td {
+	border-left: none;
+	border-right: none;
+	font-size: 0.8em;
+}
+
+.table.text-center tbody td:nth-child(2) {
+	text-align: left;
+}
+
+.search-form-container {
+    gap: 5px; 
+}
+
+.search-select-wrapper {
+    position: relative;
+    width: 150px; 
+}
+
+.select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+}
+
+.search-select:focus,
+.search-select:focus-visible {
+    box-shadow: none;
+    border-color: black;
+}
+
+.search-input {
+    width: 300px; 
+}
+
+.search-input:focus,
+.search-input:focus-visible {
+    box-shadow: none;
+    border-color: black; 
+}
+
+.search-button {
+    width: 90px;
+    height: 40px; 
+}
+
+.content-text {
+	font-weight: 400 !important;
+	font-size: 13px !important;
+}
+
+.notice {
+	font-weight: 400;
+}
+
+.notice-badge {
+	background-color: red;
+	color: white;
+	padding: 2px 8px;
+	border-radius: 11px;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.table tbody td a {
+    font-size: 0.9em !important;
+    font-weight: 500 !important;
+    color: black !important; 
+    text-decoration: none;
+}
+
+.table tbody td a:hover {
+    color: #249AF3 !important;
+}
+
+.templatemo-accordion a {
+	color: #333 !important;
+	padding: 15px 20px !important;
+	font-size: 1.0rem !important;
+	margin: 0 !important;
+	line-height: 1 !important;
+	font-weight: 500 !important;
+}
+
+.templatemo-accordion a:not(.active-menu-item):hover {
+	color: #249AF3 !important;
+	font-weight: 500 !important;
+}
+
+.templatemo-accordion a.active-menu-item {
+	color: #249AF3 !important;
+}
+
+.breadcrumb-custom a {
+	color: #555 !important;
+	margin: 0 2px !important;
+	font-size: 0.7em !important;
+	text-decoration: none;
+}
+
+.breadcrumb-custom a i.bi {
+	font-size: 0.95em !important;
+	margin-right: 2px !important;
+	text-decoration: none;
+	color: #555;
+	margin: 0 3px;
+}
+
+.breadcrumb-custom {
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.fn {
+	font-weight: 400 !important;
+}
+
+.fn1 {
+	font-weight: 600 !important;
+}
+
+.pagination .page-item.active .page-link {
+	background-color: #212529 !important;
+	border-color: transparent !important;
+	color: white !important;
+	border-radius: 8px !important;
+	pointer-events: none;
+	font-size: 1.0rem !important;
+}
+
+.pagination .page-link {
+	color: #333 !important;
+	border: 1px solid transparent !important;
+	margin: 0 3px;
+	background-color: transparent !important;
+	padding: 1px 10px !important;
+	font-size: 1.0rem !important;
+	font-weight: 400 !important;
+}
+
+.pagination .page-item:not(.active) .page-link:hover {
+	background-color: transparent !important;
+	border-color: transparent !important;
+	color: #333 !important;
+	font-weight: 600 !important;
+}
+
+.tab-manu {
+	display: flex;
+}
+
+.tab-sub {
+	flex: 1;
+	padding: 10px;
+	text-align: center;
+	background-color: #fff;
+	color: #333;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	cursor: pointer;
+	font-weight: 500 !important;
+}
+
+.tab-sub.active {
+	background-color: #333;
+	color: #fff;
+}
+
+.process-wrapper {
+	display: flex;
+	gap: 50px;
+}
+
+.sales-process-wrapper {
+	margin-bottom: 100px;
+}
+
+.step {
+	position: relative;
+}
+
+.circle {
+	width: 80px;
+	height: 80px;
+	border: 2px solid #333;
+	border-radius: 50%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px !important;
+	font-weight: 500 !important;
+	color: #222;
+	background-color: #fff;
+}
+
+.circle strong {
+	display: block;
+	font-size: 12px;
+	color: #888;
+	margin-bottom: 3px;
+}
+
+.step::after {
+	content: "";
+	position: absolute;
+	right: -50px;
+	top: 50%;
+	width: 50px;
+	height: 2px;
+	background-color: #ccc;
+}
+
+.process-wrapper:first-of-type .step:last-child::after {
+	display: none;
+}
+
+.process-wrapper:last-of-type .step:last-child::after {
+	display: none;
+}
+
+.btn-write-board {
+    border: 1px solid black; 
+    border-radius: 4px; 
+    padding: 4px 12px;
+    font-size: 15px !important; 
+    font-weight: 400 !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-write-board:hover {
+    background-color: black;
+    border-color: #999; 
+    color: white; 
+}
+
+
+/* 게시글 상세 페이지 */
+.board-detail-container {
+	background-color: #ffffff;
+	padding: 30px;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 게시글 정보 테이블 스타일 */
+.board-detail-info-table {
+    width: 100%;
+    border-collapse: collapse; 
+    margin-bottom: 20px; 
+    border-top: 2px solid #333;
+}
+
+.board-detail-info-table tr {
+    border-bottom: 1px solid #eee; 
+}
+
+.board-detail-info-table td {
+    padding: 8px; 
+    vertical-align: middle;
+    font-size: 0.8em; 
+    color: #666; 
+    font-weight: 400;
+}
+
+.board-detail-info-table .detail-label {
+    width: 100px; /* 라벨 컬럼 너비 고정 */
+    font-size: 0.7em;
+    font-weight: 700;
+    background-color: #f9f9f9;
+    text-align: left;
+    border-right: 1px solid #eee;
+}
+
+/* .board-content {
+	min-height: 200px; 내용 영역 최소 높이
+	line-height: 1.8;
+	color: #444;
+	white-space: pre-wrap; 줄바꿈 및 공백 유지
+    padding: 20px 0; 내용 위아래 패딩 (기존 유지)
+    border-top: 1px solid #eee; 내용 위 구분선 (기존 유지)
+} */
+
+.board-content p{
+	min-height: 200px; 
+	line-height: 1.8; 
+	color: #444; 
+	font-size: 0.8em !important;
+	font-weight: 400 !important; 
+	padding-left: 8px;
+}
+
+.board-actions {
+	margin-top: 30px;
+	text-align: right;
+}
+
+.board-actions .btn-outline-danger{
+	padding: 5px 15px; 
+    font-weight: 500 !important; 
+    font-size: 15px !important;
+}
+
+.board-actions .btn-outline-dark {
+    padding: 5px 15px; 
+    font-weight: 500 !important; 
+    font-size: 15px !important;
+}
+
+
+/*
+    이전/다음 글 내비게이션 스타일
+*/
+.board-nav-item {
+    padding: 3px 8px;
+    border-top: 1px solid #ccc; 
+    font-size: 0.7em;
+    font-weight: 400;
+}
+
+.board-nav-item:last-child {
+    border-bottom: 1px solid #ccc;
+}
+
+.board-nav-item a {
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+}
+
+.board-nav-item a:hover {
+    color: black;
+}
+
+.board-nav-item i {
+    font-size: 17px;
+    color: #666;
+}
+
+.board-nav-item .nav-label {
+	font-size: 15px;
+    font-weight: 600;
+    color: #555;
+    margin-right: 8px; 
+}
+
+.board-nav-item .nav-text {
+	font-size: 15px;
+	font-weight: normal;
+}
+
+.board-nav-item .nav-title {
+    flex-grow: 3;
+    white-space: nowrap; /* 제목 줄바꿈 방지 */
+    overflow: hidden; /* 넘치는 내용 숨김 */
+    text-overflow: ellipsis; /* 넘치는 내용에 ... 표시 */
+}
+
+
+/*	입찰 안내 섹션 스타일	  */
+
+#bid-guide-section-sub {
+	background-color: rgb(243, 243, 243);
+}
+
+#bid-guide-section-sub p {
+	font-size: 0.9em !important;
+	font-weight: 400 !important;
+}
+
+#bid-guide-section-sub ul li {
+	font-size: 0.9em !important;
+	font-weight: normal !important;
+}
+
+#bid-guide-section-sub h6 {
+	font-size: 1.2em;
+}
+
+#bid-guide-section-sub .mt-4.p-3 {
+	background-color: #ffffff;
+}
+
+/*	수수료 안내 섹션 스타일	*/
+
+#fee-guide-section-sub {
+   background-color: rgb(243, 243, 243);
+}
+
+#fee-guide-section-sub p {
+    font-size: 0.9em !important;
+    font-weight: 500 !important;
+}
+
+
+#fee-guide-section-sub .table tbody td {
+    font-size: 0.9em;   
+    font-weight: normal;  
+}
+
+#fee-guide-section-sub .mt-4.p-3 { 
+    background-color: #ffffff;
+}
+
+#fee-guide-section-sub h6 { 
+    font-size: 1.1em;    
+    font-weight: bold;   
+}
+
+#fee-guide-section-sub ul li { 
+    font-size: 0.9em !important;  
+    font-weight: normal !important;  
+}
+
+/*	커뮤니티 TOP버튼  */
+#scrollToTopBtn {
+	position: fixed;
+	bottom: 30px;
+	right: 30px;
+	background-color: #212529;
+	color: white;
+	padding: 8px 15px;
+	border-radius: 7px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 1rem !important;
+	transition: background-color 0.3s ease, transform 0.2s ease;
+	border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+#scrollToTopBtn:hover {
+	background-color: #343a40;
+	transform: translateY(-4px)
+}
+
+/* Typography */
+body, ul, li, p, a, label, input, div {
+	font-family: 'Roboto', sans-serif;
+	font-size: 18px !important;
+	font-weight: 300 !important;
+}
+
+.h1 {
+	font-family: 'Roboto', sans-serif;
+	font-size: 48px !important;
+	font-weight: 200 !important;
+}
+
+.h2 {
+	font-family: 'Roboto', sans-serif;
+	font-size: 30px !important;
+	font-weight: 300;
+}
+
+.h3 {
+	font-family: 'Roboto', sans-serif;
+	font-size: 22px !important;
+}
+/* General */
+.logo {
+	font-weight: 500 !important;
+}
+
+.text-warning {
+	color: #ede861 !important;
+}
+
+.text-muted {
+	color: #bcbcbc !important;
+}
+
+.text-success {
+	color: #59ab6e !important;
+}
+
+.text-light {
+	color: #cfd6e1 !important;
+}
+
+.bg-dark {
+	background-color: #212934 !important;
+}
+
+.bg-light {
+	background-color: #e9eef5 !important;
+}
+
+.bg-black {
+	background-color: #1d242d !important;
+}
+
+.bg-success {
+	background-color: #59ab6e !important;
+}
+
+.btn-success {
+	background-color: #59ab6e !important;
+	border-color: #56ae6c !important;
+}
+
+.pagination .page-link:hover {
+	color: #000;
+}
+
+.pagination .page-link:hover, .pagination .page-link.active {
+	background-color: #69bb7e;
+	color: #fff;
+}
+/* Nav */
+#templatemo_nav_top {
+	min-height: 40px;
+}
+
+#templatemo_nav_top * {
+	font-size: .9em !important;
+}
+
+#templatemo_main_nav a {
+	color: #000000;
+}
+
+#templatemo_main_nav a:hover {
+	color: #727272;
+}
+
+#templatemo_main_nav .navbar .nav-icon {
+	margin-right: 20px;
+}
+
+#main_logo {
+	width: 40%;
+	height: auto;
+}
+/* Hero Carousel */
+#template-mo-zay-hero-carousel {
+	background: #efefef !important;
+}
+/* Accordion */
+.templatemo-accordion a {
+	color: #000;
+}
+
+.templatemo-accordion a:hover {
+	color: black;
+}
+/* Shop */
+.shop-top-menu a:hover {
+	color: #727272 !important;
+}
+/* Product */
+.product-wap {
+	box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.10);
+}
+
+.product-wap .product-color-dot.color-dot-red {
+	background: #f71515;
+}
+
+.product-wap .product-color-dot.color-dot-blue {
+	background: #6db4fe;
+}
+
+.product-wap .product-color-dot.color-dot-black {
+	background: #000000;
+}
+
+.product-wap .product-color-dot.color-dot-light {
+	background: #e0e0e0;
+}
+
+.product-wap .product-color-dot.color-dot-green {
+	background: #0bff7e;
+}
+
+.card.product-wap .card .product-overlay {
+	background: rgba(0, 0, 0, .2);
+	visibility: hidden;
+	opacity: 0;
+	transition: .3s;
+}
+
+.card.product-wap:hover .card .product-overlay {
+	visibility: visible;
+	opacity: 1;
+}
+
+.card.product-wap a {
+	color: #000;
+}
+
+#carousel-related-product .slick-slide:focus {
+	outline: none !important;
+}
+
+#carousel-related-product .slick-dots li button:before {
+	font-size: 15px;
+	margin-top: 20px;
+}
+/* Brand */
+.brand-img {
+	filter: grayscale(100%);
+	opacity: 0.5;
+	transition: .5s;
+}
+
+.brand-img:hover {
+	filter: grayscale(0%);
+	opacity: 1;
+}
+/* Carousel Hero */
+#template-mo-zay-hero-carousel .carousel-indicators li {
+	margin-top: -50px;
+	background-color: #59ab6e;
+}
+
+#template-mo-zay-hero-carousel .carousel-control-next i,
+	#template-mo-zay-hero-carousel .carousel-control-prev i {
+	color: #59ab6e !important;
+	font-size: 2.8em !important;
+}
+/* Carousel Brand */
+.tempaltemo-carousel .h1 {
+	font-size: .5em !important;
+	color: #000 !important;
+}
+/* Services */
+.services-icon-wap {
+	transition: .3s;
+}
+
+.services-icon-wap:hover, .services-icon-wap:hover i {
+	color: #fff !important;
+}
+
+.services-icon-wap:hover {
+	background: #727272;
+}
+
+.services-icon-wap {
+	/* 원 모양과 크기 설정 (기존 140px에서 120px로 축소) */
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	/* 내부 아이콘과 텍스트 중앙 정렬 */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 0;
+	margin-bottom: 80px;
+}
+
+/* 아이콘 크기 조정 (기존 2.8em에서 2.2em으로 축소) */
+.services-icon-wap .h1 {
+	font-size: 1.7em;
+}
+/* 아이콘 위치 조정 */
+.services-icon-wap .h1 i { /* .h1 안에 있는 i 태그 선택 */
+	transform: translateY(18px);
+	color: #474747;
+}
+
+/* 텍스트 크기 및 위치 조정 (기존 1.1em에서 1em으로 축소) */
+.services-icon-wap .h5 {
+	font-size: 0.9em;
+	margin-top: .4rem;
+}
+
+/* BEST 상품 섹션 커스텀 */
+
+/* 그리드 간격 조정 (선택 사항, 필요에 따라 row-gap/column-gap 조절) */
+.custom-product-grid {
+	--bs-gutter-x: 1rem; /* 좌우 간격 줄이기 */
+	--bs-gutter-y: 1.5rem; /* 상하 간격 조절 */
+	justify-content: center; /* 카드 중앙 정렬 */
+}
+
+/* itemForm.html css소스 (준호)*/
+
+.page-title {
+    margin-top: 40px;    /* 헤더 아래쪽으로 40px 간격 */
+    margin-bottom: 30px; /* 폼 섹션 위쪽으로 30px 간격 */
+    text-align: center;  /* 제목을 중앙 정렬 */
+    color: #333;
+    font-size: 36px;
+}
+
+.product-form {
+    width: 100%; /* 부모 컨테이너의 전체 너비를 차지하도록 변경 */
+    margin: 30px 0; /* 상하 여백은 유지하고 좌우 여백은 제거 */
+    padding: 25px;
+    background-color: #ffffff;
+    /* box-shadow 제거 */
+    border-radius: 8px;
+    /* 그림자 효과가 필요 없으므로 이 줄은 삭제 */
+    /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); */
+}
+
+/* Section styling */
+.form-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee; /* 각 섹션 구분선 */
+}
+.form-section:last-child {
+    border-bottom: none; /* 마지막 섹션은 구분선 제거 */
+}
+.form-section h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    border-left: 5px solid #000000; /* 테마 색상으로 강조 (DropWin의 text-success 색상) */
+    padding-left: 10px;
+}
+
+/* Form group (label + input) spacing */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Label styling */
+.form-group label {
+    display: block; /* 라벨을 블록 요소로 만들어 위에 배치 */
+    font-weight: 500; /* 글씨 두께 */
+    color: #555;
+    margin-bottom: 8px; /* 라벨과 입력 필드 사이 여백 */
+    font-size: 16px; /* 라벨 글씨 크기 조정 */
+}
+
+/* Input, Select, Textarea basic styling overrides */
+/* Bootstrap의 .form-control 클래스에 추가적으로 적용 */
+.form-control {
+    padding: 10px 12px; /* 패딩 조정 */
+    font-size: 16px; /* 글씨 크기 */
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da; /* 기본 테두리 색상 */
+    border-radius: 5px; /* 약간 둥근 테두리 */
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.form-control:focus {
+    border-color: #80bdff; /* 포커스 시 테두리 색상 */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* 포커스 시 그림자 */
+}
+
+/* Specific styling for file input (Bootstrap's .form-control doesn't fully style type="file") */
+.form-control-file {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+
+/* Unit suffix for price inputs */
+.input-with-unit {
+    display: flex; /* 단위와 입력 필드를 한 줄에 */
+    align-items: center;
+}
+.input-with-unit input {
+    flex-grow: 1; /* 입력 필드가 가능한 공간을 모두 차지 */
+    margin-right: 8px; /* 입력 필드와 단위 사이 여백 */
+}
+.input-with-unit span {
+    font-weight: 500;
+    color: #666;
+    white-space: nowrap; /* "원"이 다음 줄로 넘어가지 않도록 */
+}
+
+/* Help text below inputs */
+.help-text {
+    font-size: 13px;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* Image preview area */
+.image-preview-area {
+    display: flex;
+    flex-wrap: wrap; /* 여러 이미지가 있을 때 줄바꿈 */
+    gap: 10px; /* 이미지 간 간격 */
+    border: 1px dashed #ccc;
+    padding: 15px;
+    min-height: 120px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+}
+.image-preview-area .placeholder {
+    color: #aaa;
+    font-size: 16px;
+}
+.image-preview-area img {
+     max-width: 100px !important; /* 미리보기 이미지 크기 조정 */
+     max-height: 100px !important;
+     object-fit: cover;
+     border: 1px solid #ddd;
+     border-radius: 4px;
+}
+
+/* Form action buttons */
+.form-actions {
+    text-align: center;
+    padding-top: 20px;
+}
+.form-actions .btn {
+    padding: 10px 25px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    margin: 0 10px;
+}
+.form-actions .btn.primary {
+    background-color: #000000; /* 등록 버튼 테마 색상 (DropWin의 text-success 색상) */
+    color: white;
+}
+.form-actions .btn.primary:hover {
+    background-color: #808080;
+}
+.form-actions .btn.secondary {
+    background-color: #6c757d; /* 취소 버튼 회색 */
+    color: white;
+}
+.form-actions .btn.secondary:hover {
+    background-color: rgb(192, 192, 192);
+}
+
+.unread-dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	background-color: red;
+	border-radius: 50%;
+	margin-left: 5px;
+	vertical-align: middle;
+}
+
+/* 한 줄에 5개의 카드를 위한 커스텀 컬럼 너비 */
+/* 화면 크기가 md (768px) 이상일 때 적용 */
+@media ( min-width : 768px) {
+	.col-md-custom {
+		flex: 0 0 auto; /* 고정 너비 사용 */
+		width: 20%; /* 한 줄에 5개 = 100% / 5 = 20% */
+	}
+}
+
+/* 이미지 크기 조정 */
+.custom-product-grid .card-img-top {
+	height: 150px; /* 이미지 높이 고정 (조절 가능) */
+	object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
+}
+
+/* 폰트 및 요소 크기 조정 */
+.custom-product-grid .card-body {
+	padding: 0.8rem; /* 카드 바디 내부 패딩 줄이기 */
+	/* ↓↓↓ 이 두 줄을 추가하거나 확인해주세요 ↓↓↓ */
+	display: flex; /* Flexbox 활성화 */
+	flex-direction: column; /* 자식 요소들을 수직으로 쌓음 */
+	/* ↑↑↑ 이 두 줄을 추가하거나 확인해주세요 ↑↑↑ */
+}
+
+.custom-product-grid .custom-star-list {
+	margin-bottom: 0.4rem; /* 별점 리스트 아래 마진 줄이기 */
+}
+
+.custom-product-grid .custom-star-list i {
+	font-size: 0.8em; /* 별 아이콘 크기 줄이기 */
+}
+
+.custom-product-grid .custom-price {
+	font-size: 0.85em; /* 가격 폰트 크기 줄이기 */
+}
+
+.custom-product-grid .custom-product-title {
+	font-size: 1.1em; /* 상품명 폰트 크기 줄이기 */
+	margin-bottom: 0.2rem; /* 상품명 아래 마진 줄이기 */
+}
+
+.custom-product-grid .custom-product-description {
+	font-size: 0.75em; /* 설명 폰트 크기 줄이기 */
+	margin-bottom: 0.4rem; /* 설명 아래 마진 줄이기 */
+	height: 4.5em; /* 설명 높이 고정 (약 3줄) */
+	overflow: hidden; /* 넘치는 텍스트 숨기기 */
+	text-overflow: ellipsis; /* 넘치는 텍스트 ... 처리 */
+	display: -webkit-box;
+	-webkit-line-clamp: 3; /* 3줄로 제한 */
+	-webkit-box-orient: vertical;
+}
+
+.custom-product-grid .custom-reviews {
+	font-size: 0.7em;
+	margin-bottom: 0; /* 기본 마진 제거 */
+	margin-top: auto; /* 이 부분이 핵심입니다! */
+}
+/* Contact map */
+.leaflet-control a, .leaflet-control {
+	font-size: 10px !important;
+}
+
+.form-control {
+	border: 1px solid #e8e8e8;
+}
+/* Footer */
+#tempaltemo_footer a {
+	color: #dcdde1;
+}
+
+#tempaltemo_footer a:hover {
+	color: #000000;
+}
+
+#tempaltemo_footer ul.footer-link-list li {
+	padding-top: 10px;
+}
+
+#tempaltemo_footer ul.footer-icons li {
+	width: 2.6em;
+	height: 2.6em;
+	line-height: 2.6em;
+}
+
+#tempaltemo_footer ul.footer-icons li:hover {
+	background-color: #cfd6e1;
+	transition: .5s;
+}
+
+#tempaltemo_footer ul.footer-icons li:hover i {
+	color: #212934;
+	transition: .5s;
+}
+
+#tempaltemo_footer .border-light {
+	border-color: #2d343f !important;
+}
+/*
+// Extra small devices (portrait phones, less than 576px)
+// No media query since this is the default in Bootstrap
+*/
+/* Small devices (landscape phones, 576px and up)*/
+.product-wap .h3, .product-wap li, .product-wap i, .product-wap p {
+	font-size: 12px !important;
+}
+
+.product-wap .product-color-dot {
+	width: 6px;
+	height: 6px;
+}
+
+@media ( min-width : 576px) {
+	.tempaltemo-carousel .h1 {
+		font-size: 1em !important;
+	}
+}
+
+/*// Medium devices (tablets, 768px and up)*/
+@media ( min-width : 768px) {
+	#templatemo_main_nav .navbar-nav {
+		max-width: 450px;
+	}
+}
+
+/* Large devices (desktops, 992px and up)*/
+@media ( min-width : 992px) {
+	#templatemo_main_nav .navbar-nav {
+		max-width: 550px;
+	}
+	#template-mo-zay-hero-carousel .carousel-item {
+		min-height: 30rem !important;
+	}
+	.product-wap .h3, .product-wap li, .product-wap i, .product-wap p {
+		font-size: 18px !important;
+	}
+	.product-wap .product-color-dot {
+		width: 12px;
+		height: 12px;
+	}
+}
+
+/* Extra large devices (large desktops, 1200px and up)*/
+@media ( min-width : 1200px) {
+}

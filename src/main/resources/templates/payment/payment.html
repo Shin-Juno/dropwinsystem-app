@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
+
+<head>
+<title>결제 페이지</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+<script
+	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</head>
+
+<div layout:fragment="content"
+	th:with="shippingFee=${paymentPrice >= 50000 ? 0 : 3000}, commissionFee=${T(java.lang.Math).round(paymentPrice * 0.099)}, totalPrice=${paymentPrice + shippingFee + commissionFee}">
+	<div class="container my-5">
+		<h2 class="mb-4">주문서</h2>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="card mb-4">
+					<div class="card-header bg-dark text-white fw-bold">주문자 정보</div>
+					<div class="card-body">
+						<form id="orderForm">
+
+							<div class="col-6 mb-3">
+								<label for="buyerName" class="form-label">이름</label>
+								<input type="text" class="form-control" id="buyerName" th:value="${name} ?: ''">
+							</div>
+
+							<div class="mb-3">
+								<label for="buyerTel" class="form-label">휴대폰 번호</label>
+								<div class="row">
+									<div class="col-2">
+										<select class="form-select" id="telPrefix">
+											<option value="010" th:selected="${mobilePrefix == '010'}">010</option>
+											<option value="011" th:selected="${mobilePrefix == '011'}">011</option>
+											<option value="016" th:selected="${mobilePrefix == '016'}">016</option>
+											<option value="017" th:selected="${mobilePrefix == '017'}">017</option>
+											<option value="018" th:selected="${mobilePrefix == '018'}">018</option>
+											<option value="019" th:selected="${mobilePrefix == '019'}">019</option>
+										</select>
+									</div>
+									_
+									<div class="col-2">
+										<input type="tel" class="form-control" id="telMiddle"
+											maxlength="4" th:value="${mobileMiddle}">
+									</div>
+									_
+									<div class="col-2">
+										<input type="tel" class="form-control" id="telLast"
+											maxlength="4" th:value="${mobileLast}">
+									</div>
+								</div>
+							</div>
+
+							<div class="mb-3">
+								<label class="form-label">주소</label>
+								<div class="row g-2 mb-2">
+									<div class="col-3">
+										<input type="text" class="form-control" id="sample6_postcode"
+											placeholder="우편번호" readonly>
+									</div>
+									<div class="col-3">
+										<button type="button" class="btn btn-outline-secondary w-100"
+											onclick="sample6_execDaumPostcode()">우편번호 찾기</button>
+									</div>
+								</div>
+								<input type="text" class="form-control mb-2"
+									id="sample6_address" placeholder="기본 주소" readonly>
+								<div class="row g-2">
+									<div class="col-6">
+										<input type="text" class="form-control"
+											id="sample6_detailAddress" placeholder="상세주소">
+									</div>
+									<div class="col-6">
+										<input type="text" class="form-control"
+											id="sample6_extraAddress" placeholder="참고항목" readonly>
+									</div>
+								</div>
+							</div>
+							<div class="mb-3">
+								<label for="deliveryRequest" class="form-label">배송 요청사항</label>
+								<select class="form-select" id="deliveryRequest">
+									<option value="">선택</option>
+									<option value="문앞에 놓아주세요.">문앞에 놓아주세요.</option>
+									<option value="경비실에 맡겨주세요.">경비실에 맡겨주세요.</option>
+									<option value="택배함에 넣어주세요.">택배함에 넣어주세요.</option>
+									<option value="배송 전에 연락 주세요.">배송 전에 연락 주세요.</option>
+									<option value="직접입력">직접입력</option>
+								</select>
+							</div>
+
+							<div class="mb-3" id="directInputGroup" style="display: none;">
+								<label for="directDeliveryRequest" class="form-label">요청사항
+									직접입력</label>
+								<textarea class="form-control" id="directDeliveryRequest"
+									rows="3" maxlength="50" placeholder="최대 50자까지 입력 가능합니다."></textarea>
+								<div class="text-end small text-muted mt-1">
+									<span id="charCount">0</span>/50
+								</div>
+							</div>
+
+						</form>
+					</div>
+				</div>
+
+				<div class="card mb-4">
+					<div class="card-header bg-dark text-white fw-bold">주문 상품 1개</div>
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<img class="me-3"
+								th:src="${item.mainImageUrl != null and item.mainImageUrl.length() > 0} ? @{'/auction_uploads/' + ${item.mainImageUrl}} : 'https://via.placeholder.com/80'"
+								style="width: 80px; height: 80px; object-fit: cover; margin-right: 10px;">
+							<div>
+								<h6 class="mb-1" th:text="${item.name}">상품명</h6>
+								<p class="mb-1 text-muted small" th:text="${item.features}">상품
+									설명</p>
+								<p class="text-success fw-bold mb-0"
+									th:text="${#numbers.formatInteger(item.buyNowPrice, 0, 'COMMA')} + '원'">100,000원</p>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="col-md-5">
+				<div class="bg-light border rounded p-4">
+					<h5 class="mb-3">결제 금액</h5>
+					<hr>
+
+					<div class="d-flex justify-content-between mb-2">
+						<span>상품 금액</span> <span
+							th:text="${#numbers.formatInteger(paymentPrice, 0, 'COMMA')} + '원'"
+							id="itemPriceDisplay" th:attr="data-price=${paymentPrice}">0
+							원</span>
+					</div>
+
+					<div class="d-flex justify-content-between mb-2">
+						<span>배송비</span> <span
+							th:text="${shippingFee == 0 ? '무료배송' : #numbers.formatInteger(shippingFee, 0, 'COMMA') + '원'}">무료배송</span>
+					</div>
+
+					<div class="d-flex justify-content-between mb-4">
+						<span>구매 수수료 (9.9%)</span> <span
+							th:text="${#numbers.formatInteger(commissionFee, 0, 'COMMA')} + '원'">0원</span>
+					</div>
+
+					<hr>
+
+					<div class="d-flex justify-content-between mb-3 fw-bold fs-5">
+						<span>총 결제 금액</span> <span id="totalPriceDisplay"
+							th:attr="data-price=${totalPrice}"
+							th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + '원'">0
+							원</span>
+					</div>
+
+					<p class="text-muted small text-center mb-4">주문을 확인했으며 동의합니다.</p>
+
+					<div class="d-grid gap-2">
+						<button id="btnPayment" class="btn btn-dark btn-lg">
+							<span id="btnPaymentPrice"
+								th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')} + '원'">0
+								원</span> 결제하기
+						</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ⭐⭐ 기존 hidden input 제거 ⭐⭐ -->
+<!-- <input type="hidden" id="itemId" th:value="${item.id}" /> -->
+<!-- <input type="hidden" id="currentUserId" th:value="${loginUser?.id}" /> -->
+
+<th:block layout:fragment="scripts">
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+        // ⭐⭐ itemId와 userId를 JavaScript 변수로 직접 주입 ⭐⭐
+        const currentItemId = /*[[${item.id}]]*/ null;
+        const currentUserId = /*[[${loginUser?.id}]]*/ null;
+
+		// --- 페이지 로드 시 초기 설정 ---
+
+		// 배송 요청사항 '직접입력' 선택 시 입력창 표시/숨김
+		document.getElementById('deliveryRequest').addEventListener('change', function () {
+			const directInputGroup = document.getElementById('directInputGroup');
+			directInputGroup.style.display = this.value === '직접입력' ? 'block' : 'none';
+		});
+
+		// 직접입력 글자 수 카운트(50자) 기능
+		const textarea = document.getElementById('directDeliveryRequest');
+		const charCount = document.getElementById('charCount');
+		if (textarea) {
+			textarea.addEventListener('input', function () {
+				charCount.textContent = this.value.length;
+			});
+		}
+
+		// --- Daum 우편번호 찾기 API ---
+		function sample6_execDaumPostcode() {
+			new daum.Postcode({
+				oncomplete: function (data) {
+					let addr = '', extraAddr = '';
+					if (data.userSelectedType === 'R') { // 도로명 주소
+						addr = data.roadAddress;
+						if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) extraAddr += data.bname;
+						if (data.buildingName !== '' && data.apartment === 'Y') extraAddr += (extraAddr ? ', ' + data.buildingName : data.buildingName);
+						if (extraAddr) extraAddr = ' (' + extraAddr + ')';
+						document.getElementById("sample6_extraAddress").value = extraAddr;
+					} else { // 지번 주소
+						addr = data.jibunAddress;
+						document.getElementById("sample6_extraAddress").value = '';
+					}
+					document.getElementById('sample6_postcode').value = data.zonecode;
+					document.getElementById("sample6_address").value = addr;
+					document.getElementById("sample6_detailAddress").focus();
+				}
+			}).open();
+		}
+
+		// --- 아임포트 결제 로직 ---
+		document.getElementById('btnPayment').addEventListener('click', () => {
+
+			// 1. 결제에 필요한 정보 변수 선언
+			const totalPrice = parseInt(document.getElementById('totalPriceDisplay').getAttribute('data-price'), 10);
+			const itemName = /*[[${item.name}]]*/ '상품명';
+
+			// 2. 주문자 정보 및 배송 정보 가져오기
+			const buyerName = document.getElementById('buyerName').value.trim();
+			const telPrefix = document.getElementById('telPrefix').value;
+			const telMiddle = document.getElementById('telMiddle').value.trim();
+			const telLast = document.getElementById('telLast').value.trim();
+			const buyerTel = `${telPrefix}-${telMiddle}-${telLast}`;
+
+			const postcode = document.getElementById('sample6_postcode').value.trim();
+			const address = document.getElementById('sample6_address').value.trim();
+			const detailAddress = document.getElementById('sample6_detailAddress').value.trim();
+			const extraAddress = document.getElementById('sample6_extraAddress').value.trim();
+			const fullAddress = `(${postcode}) ${address} ${detailAddress} ${extraAddress}`.trim();
+
+			const deliveryRequestSelect = document.getElementById('deliveryRequest');
+			const deliveryRequest = deliveryRequestSelect.value;
+			const directDeliveryRequest = document.getElementById('directDeliveryRequest').value.trim();
+			const finalDeliveryRequest = (deliveryRequest === '직접입력') ? directDeliveryRequest : deliveryRequest;
+
+            // ⭐⭐ 직접 주입된 itemId와 userId 변수 사용 ⭐⭐
+            const itemId = currentItemId;
+            const userId = currentUserId;
+
+			// 3. 유효성 검사 (Validation)
+			if (!buyerName) {
+				console.log("이름을 입력해주세요.");
+				document.getElementById('buyerName').focus();
+				return;
+			}
+			if (!/^\d{3,4}$/.test(telMiddle) || !/^\d{4}$/.test(telLast)) {
+				console.log("유효한 휴대폰 번호를 입력해주세요.");
+				return;
+			}
+			if (!postcode || !address) {
+				console.log("우편번호 찾기를 통해 주소를 입력해주세요.");
+				return;
+			}
+			if (!detailAddress) {
+				console.log("상세주소를 입력해주세요.");
+				document.getElementById('sample6_detailAddress').focus();
+				return;
+			}
+			if (deliveryRequest === '직접입력' && !directDeliveryRequest) {
+				console.log("배송 요청사항을 직접 입력해주세요.");
+				document.getElementById('directDeliveryRequest').focus();
+				return;
+			}
+			if (totalPrice === 0 || isNaN(totalPrice)) {
+				console.log("결제할 상품 정보가 올바르지 않습니다.");
+				return;
+			}
+
+			// 4. 결제 전 최종 확인
+			if (!confirm("입력하신 정보로 결제를 진행하시겠습니까?")) {
+				return; // '취소'를 누르면 결제 프로세스 중단
+			}
+
+			// 5. 아임포트 결제 요청
+			const imp_init_code = 'imp88742586'; // 테스트용 가맹점 식별코드
+			const IMP = window.IMP;
+			IMP.init(imp_init_code);
+
+            console.log("아임포트 결제 요청 시작...");
+            console.log("결제 정보:", {
+                pg: 'html5_inicis',
+                pay_method: 'card',
+                merchant_uid: 'mid_' + new Date().getTime(),
+                name: itemName,
+                amount: totalPrice,
+                buyer_name: buyerName,
+                buyer_tel: buyerTel,
+                buyer_addr: fullAddress,
+                buyer_email: 'test@example.com',
+                custom_data: {
+                    delivery_request: finalDeliveryRequest,
+                    itemId: itemId,
+                    userId: userId
+                }
+            });
+
+
+			IMP.request_pay({
+				pg: 'html5_inicis', // PG사
+				pay_method: 'card', // 결제수단
+				merchant_uid: 'mid_' + new Date().getTime(), // 주문번호 (고유하게 생성)
+				name: itemName, // 주문명
+				amount: totalPrice, // 결제금액
+				buyer_name: buyerName, // 구매자 이름
+				buyer_tel: buyerTel, // 구매자 연락처
+				buyer_addr: fullAddress, // 구매자 주소 (배송 요청사항은 custom_data로 전달)
+				buyer_email: 'test@example.com', // 구매자 이메일 (필요시 실제 값으로 변경)
+				custom_data: { // 서버로 전달할 추가 데이터
+					delivery_request: finalDeliveryRequest,
+                    itemId: itemId, // ⭐⭐ itemId 추가 ⭐⭐
+                    userId: userId   // ⭐⭐ userId 추가 ⭐⭐
+				}
+			}, function (rsp) { // 결제 후 콜백 함수
+                console.log("아임포트 콜백 응답:", rsp); // 아임포트 응답 전체 로깅
+
+				if (rsp.success) {
+					console.log('결제 성공! 결제 번호: ' + rsp.imp_uid);
+
+					// ⭐⭐ 결제 성공 시 POST 요청으로 서버에 알림 ⭐⭐
+                    fetch('/paymentSuccess', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            imp_uid: rsp.imp_uid,
+                            merchant_uid: rsp.merchant_uid,
+                            itemId: itemId, // 서버에 전달할 itemId
+                            userId: userId  // 서버에 전달할 userId
+                        })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('서버 업데이트 성공!');
+                            location.href = "/paymentSuccess";
+                        } else {
+                            console.error('서버 업데이트 실패:', response.status, response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch 오류 발생:', error);
+                    });
+				} else {
+					console.error('결제 실패:', rsp.error_msg);
+				}
+			});
+		});
+	/*]]>*/
+	</script>
+</th:block>
+
+</html>

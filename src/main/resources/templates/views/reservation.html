@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
+
+<head>
+<title>DropWin - 나의 입찰 현황</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ⭐⭐ 로딩 애니메이션을 위한 CSS를 추가했습니다. ⭐⭐ -->
+<style>
+    .loading-dots span {
+        display: inline-block;
+        animation: dot-flashing 1.4s infinite linear alternate;
+        opacity: 0;
+    }
+    .loading-dots span:nth-child(1) { animation-delay: 0s; }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes dot-flashing {
+        0% { opacity: 0; }
+        50% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+</style>
+</head>
+
+<body>
+	<div layout:fragment="content" class="container pb-5 mt-4">
+		<h2 class="h3 mb-4 text-center">나의 입찰 현황</h2>
+
+		<div class="table-responsive">
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>순서</th>
+						<th>상품사진 / 상품명</th>
+						<th>입찰가</th>
+						<th>나의 입찰 시간</th>
+						<th>경매 종료까지 남은 시간</th>
+						<th>입찰 상태</th>
+						<th>현재 진행 상태</th>
+					</tr>
+				</thead>
+				<tbody>
+					<th:block th:if="${#lists.isEmpty(userBids)}">
+						<tr>
+							<td colspan="7" class="text-center text-muted py-4">입찰 내역이
+								없습니다.</td>
+						</tr>
+					</th:block>
+					<th:block th:unless="${#lists.isEmpty(userBids)}">
+						<tr th:each="bid, stat : ${userBids}"
+							th:id="${'bid-row-' + bid.id}">
+							<td style="vertical-align: middle;" th:text="${stat.count}"></td>
+							<td style="vertical-align: middle;">
+								<th:block th:if="${bid.status == '낙찰' or bid.status == '결제완료' or bid.status == '입찰 중'}">
+									<a th:href="@{/item/detail/{id}(id=${bid.itemId})}" class="text-decoration-none text-dark d-flex align-items-center">
+										<img th:if="${bid.itemImagePath != null and bid.itemImagePath.length() > 0}"
+											 th:src="@{'/auction_uploads/' + ${bid.itemImagePath}}"
+											 alt="상품 사진"
+											 style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+										<span th:text="${bid.itemName}" style="line-height: 1.2;"></span>
+									</a>
+								</th:block>
+								<th:block th:unless="${bid.status == '낙찰' or bid.status == '결제완료' or bid.status == '입찰 중'}">
+									<div class="d-flex align-items-center">
+										<img th:if="${bid.itemImagePath != null and bid.itemImagePath.length() > 0}"
+											 th:src="@{'/auction_uploads/' + ${bid.itemImagePath}}"
+											 alt="상품 사진"
+											 style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+										<span th:text="${bid.itemName}" style="line-height: 1.2; color: #6c757d;"></span>
+									</div>
+								</th:block>
+							</td>
+							<td style="vertical-align: middle;"
+								th:text="${#numbers.formatInteger(bid.bidPrice, 0, 'COMMA')} + '원'"></td>
+							<td style="vertical-align: middle;"
+								th:text="${#temporals.format(bid.bidTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+							<td style="vertical-align: middle;" class="remaining-time"
+								th:data-end-time="${bid.itemEndTime != null ? #temporals.format(bid.itemEndTime, 'yyyy-MM-dd HH:mm:ss') : ''}"></td>
+							<td style="vertical-align: middle;" th:text="${bid.status}"></td>
+							<td style="vertical-align: middle;">
+								<th:block th:if="${bid.status == '결제완료'}">
+									<span class="fw-bold" style="color: #28a745;">배송 준비 중</span> 
+								</th:block>
+								<th:block th:if="${bid.status == '낙찰'}">
+									<a th:href="@{/payment/{id}(id=${bid.itemId}, bidPrice=${bid.bidPrice})}"
+										class="text-decoration-none fw-bold">결제하기</a>
+								</th:block>
+								<th:block th:if="${bid.status == '패찰'}">
+									<span class="text-danger fw-bold btn btn-sm">패찰</span>
+								</th:block>
+								<th:block th:if="${bid.status == '입찰 중'}">
+									<!-- ⭐⭐ '입찰 진행중' 링크 스타일 수정 ⭐⭐ -->
+									<a th:href="@{/item/detail/{id}(id=${bid.itemId})}"
+										class="text-decoration-none fw-bold">
+										입찰 진행중
+										<span class="loading-dots">
+											<span>.</span><span>.</span><span>.</span>
+										</span>
+									</a>
+								</th:block>
+							</td>
+						</tr>
+					</th:block>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script>
+        $(document).ready(function() {
+            const highlightItemId = /*[[${highlightItemId}]]*/ null;
+            const highlightBidPrice = /*[[${highlightBidPrice}]]*/ null;
+
+            if (highlightItemId !== null && highlightBidPrice !== null) {
+                $('tr').each(function() {
+                    const rowBidId = $(this).attr('id');
+                    const rowBidPrice = parseInt($(this).find('td:eq(2)').text().replace(/[^0-9]/g, ''));
+
+                    if (rowBidId && rowBidId.includes('bid-row-')) {
+                         const currentItemId = parseInt(rowBidId.split('-')[2]);
+                         if (currentItemId === highlightItemId) {
+                             if (rowBidPrice === highlightBidPrice) {
+                                $(this).addClass('table-info');
+
+                                setTimeout(() => {
+                                    $(this).removeClass('table-info');
+                                }, 5000);
+                            }
+                         }
+                    }
+                });
+            }
+
+            function updateAllRemainingTimes() {
+                $('.remaining-time').each(function() {
+                    const endTimeStr = $(this).data('end-time');
+                    if (!endTimeStr) {
+                        $(this).text('경매 종료');
+                        return;
+                    }
+
+                    const itemEndTime = new Date(endTimeStr.replace(/-/g, '/'));
+                    const now = new Date();
+                    const diff = itemEndTime.getTime() - now.getTime();
+
+                    if (diff <= 0) {
+                        $(this).text('경매 종료');
+                        return;
+                    }
+
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    let timeString = '';
+                    if (days > 0) timeString += days + '일 ';
+                    timeString += `${hours.toString().padStart(2, '0')}시간 ${minutes.toString().padStart(2, '0')}분 ${seconds.toString().padStart(2, '0')}초`;
+                    $(this).text(timeString);
+                });
+            }
+
+            setInterval(updateAllRemainingTimes, 1000);
+            updateAllRemainingTimes();
+        });
+    </script>
+	</th:block>
+</body>
+</html>

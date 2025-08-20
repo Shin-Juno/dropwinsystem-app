@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dropwinsystem.app.mapper.ItemMapper">
+
+    <!-- 물품 등록 맵핑 구문 -->
+    <insert id="insertItem" parameterType="com.dropwinsystem.app.domain.Item" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO items (
+            category, name, start_price, buy_now_price,
+            end_time, image_paths, transaction_method, return_policy, status, seller_id,
+            current_price, bid_count
+        ) VALUES (
+            #{category}, #{name}, #{startPrice}, #{buyNowPrice},
+            #{endTime}, #{imagePaths}, #{transactionMethod}, #{returnPolicy}, #{status}, #{sellerId},
+            #{startPrice}, 0
+        )
+    </insert>
+
+    <!-- 물품 ID로 물품 조회 맵핑 구문 -->
+    <select id="selectItemById" parameterType="int" resultType="com.dropwinsystem.app.domain.Item">
+        SELECT
+            i.id, i.category, i.name, i.start_price AS startPrice,
+            i.buy_now_price AS buyNowPrice, i.end_time AS endTime, i.image_paths AS imagePaths,
+            i.transaction_method AS transactionMethod, i.return_policy AS returnPolicy,
+            i.status, i.created_at AS createdAt, i.seller_id AS sellerId,
+            i.current_price AS currentPrice,
+            i.bid_count AS bidCount,
+            i.is_paid AS isPaid,
+            id.size, id.release_year AS releaseYear, id.country, id.material, id.item_condition AS itemCondition, id.color, id.brand, id.features
+        FROM items i
+        LEFT JOIN ITEMS_DETAIL id ON i.id = id.ITEM_ID
+        WHERE i.id = #{id}
+    </select>
+
+    <!-- 대기 중인 물품 목록 조회 맵핑 구문 -->
+    <select id="selectPendingItems" resultType="com.dropwinsystem.app.domain.Item">
+        SELECT
+            i.id, i.category, i.name, i.start_price AS startPrice,
+            i.buy_now_price AS buyNowPrice, i.end_time AS endTime, i.image_paths AS imagePaths,
+            i.transaction_method AS transactionMethod, i.return_policy AS returnPolicy,
+            i.status, i.created_at AS createdAt, i.seller_id AS sellerId,
+            i.current_price AS currentPrice,
+            i.bid_count AS bidCount,
+            i.is_paid AS isPaid,
+            id.size, id.release_year AS releaseYear, id.country, id.material, id.item_condition AS itemCondition, id.color, id.brand, id.features
+        FROM items i
+        LEFT JOIN ITEMS_DETAIL id ON i.id = id.ITEM_ID
+        WHERE i.status = 'pending'
+        ORDER BY i.created_at DESC
+    </select>
+
+    <!-- 물품 상태를 업데이트하는 맵핑 구문 -->
+    <update id="updateItemStatus" parameterType="map">
+        UPDATE items
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+    
+    <!-- current_price 업데이트 맵핑 구문 -->
+    <update id="updateCurrentPrice" parameterType="map">
+        UPDATE items
+        SET current_price = #{newPrice}
+        WHERE id = #{itemId}
+    </update>
+
+    <!-- bid_count를 1 증가시키는 맵핑 구문 -->
+    <update id="incrementBidCount" parameterType="int">
+        UPDATE items
+        SET bid_count = bid_count + 1
+        WHERE id = #{itemId}
+    </update>
+
+    <!-- 모든 물품 조회 맵핑 구문에 조건 추가 (shop.html에서 사용) -->
+    <select id="selectAllItems" parameterType="map" resultType="com.dropwinsystem.app.domain.Item">
+        SELECT
+            i.id, i.category, i.name, i.start_price AS startPrice,
+            i.buy_now_price AS buyNowPrice, i.end_time AS endTime, i.image_paths AS imagePaths,
+            i.transaction_method AS transactionMethod, i.return_policy AS returnPolicy,
+            i.status, i.created_at AS createdAt, i.seller_id AS sellerId,
+            i.current_price AS currentPrice,
+            i.bid_count AS bidCount,
+            i.is_paid AS isPaid,
+            id.size, id.release_year AS releaseYear, id.country, id.material, id.item_condition AS itemCondition, id.color, id.brand, id.features
+        FROM items i
+        LEFT JOIN ITEMS_DETAIL id ON i.id = id.ITEM_ID
+        <where>
+            i.status = 'approved' AND i.is_paid = 0
+            <if test="category != null and category != ''">
+                AND i.category = #{category}
+            </if>
+            <if test="searchQuery != null and searchQuery != ''">
+                AND i.name LIKE CONCAT('%', #{searchQuery}, '%')
+            </if>
+        </where>
+        <choose>
+            <when test="filter == 'popular'">
+                ORDER BY i.bid_count DESC
+            </when>
+            <when test="filter == 'popular_asc'">
+                ORDER BY i.bid_count ASC
+            </when>
+            <when test="filter == 'recent'">
+                ORDER BY i.created_at DESC
+            </when>
+            <when test="filter == 'recent_asc'">
+                ORDER BY i.created_at ASC
+            </when>
+            <otherwise>
+                ORDER BY i.created_at DESC
+            </otherwise>
+        </choose>
+    </select>
+    
+    <update id="updateItemPaymentStatus" parameterType="map">
+		UPDATE items
+		SET is_paid = #{isPaid}
+		WHERE id = #{itemId}
+	</update>
+	
+	<update id="updateEndTime" parameterType="map"> <!-- ⭐⭐⭐ parameterType="map"으로 변경 ⭐⭐⭐ -->
+        UPDATE items
+        SET end_time = #{endTime}
+        WHERE id = #{id}
+    </update>
+
+    <!-- ⭐⭐⭐ 수정: '경매 중' 대신 'approved'로 변경 ⭐⭐⭐ -->
+    <select id="findExpiredItemsWithPendingStatus" resultType="com.dropwinsystem.app.domain.Item">
+        SELECT id, name, end_time, status
+        FROM items
+        WHERE end_time &lt; NOW() AND status = 'approved'
+    </select>
+
+    <!-- Best 상품 조회 맵핑 구문 (입찰 수 기준) -->
+    <select id="selectBestItems" resultType="com.dropwinsystem.app.domain.Item">
+        SELECT
+            i.id, i.category, i.name, i.start_price AS startPrice,
+            i.buy_now_price AS buyNowPrice, i.end_time AS endTime, i.image_paths AS imagePaths,
+            i.transaction_method AS transactionMethod, i.return_policy AS returnPolicy,
+            i.status, i.created_at AS createdAt, i.seller_id AS sellerId,
+            i.current_price AS currentPrice,
+            i.bid_count AS bidCount,
+            i.is_paid AS isPaid,
+            id.size, id.release_year AS releaseYear, id.country, id.material, id.item_condition AS itemCondition, id.color, id.brand, id.features
+        FROM items i
+        LEFT JOIN ITEMS_DETAIL id ON i.id = id.ITEM_ID
+        WHERE i.status = 'approved' AND i.is_paid = 0
+        ORDER BY i.bid_count DESC, i.created_at DESC
+        LIMIT 10
+    </select>
+
+ <select id="selectItemForUpdateById" parameterType="int" resultType="com.dropwinsystem.app.domain.Item">
+        SELECT
+            i.id, i.category, i.name, i.start_price AS startPrice,
+            i.buy_now_price AS buyNowPrice, i.end_time AS endTime, i.image_paths AS imagePaths,
+            i.transaction_method AS transactionMethod, i.return_policy AS returnPolicy,
+            i.status, i.created_at AS createdAt, i.seller_id AS sellerId,
+            i.current_price AS currentPrice,
+            i.bid_count AS bidCount,
+            i.is_paid AS isPaid
+        FROM items i
+        WHERE i.id = #{id} FOR UPDATE
+    </select>
+
+</mapper>

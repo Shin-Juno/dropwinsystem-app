@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
+
+<head>
+<title>DropWin - join</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="apple-touch-icon" href="img/apple-icon.png">
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/templatemo.css">
+<link rel="stylesheet" href="css/custom.css">
+
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+<link rel="stylesheet" href="css/fontawesome.min.css">
+
+<script src="https://kit.fontawesome.com/47be2e00b6.js"
+	crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+	<div layout:fragment="content">
+		<div class="container py-5">
+			<div class="row justify-content-center">
+				<div class="col-md-6 bg-white p-4 rounded shadow-sm">
+					<h2 class="text-center mb-4">회원가입</h2>
+
+					<form id="joinForm" action="/joinResult" method="post">
+						<input type="hidden" id="isIdCheck" name="isIdCheck" value="false">
+
+						<div style="height: 20px;"></div>
+
+						<div class="mb-4">
+							<label for="name" class="form-label fw-bold fs-6"
+								style="font-size: 10px;">이름</label> <input type="text"
+								class="form-control rounded-0 shadow-none fs-6" id="name"
+								name="name"
+								style="border: none; border-bottom: 1px solid #ccc; font-size: 10px; outline: none;">
+						</div>
+						<div class="mb-4">
+							<label for="id" class="form-label fw-bold fs-6"
+								style="font-size: 10px;">ID</label>
+							<div class="input-group">
+								<input type="text"
+									class="form-control rounded-0 shadow-none fs-6" id="id"
+									name="id"
+									style="border: none; border-bottom: 1px solid #ccc; font-size: 10px; outline: none;">
+								<input type="button" class="btn btn-dark btn-sm rounded ms-2"
+									id="btnOverlapId" value="중복확인">
+							</div>
+							<div id="idCheckMsg" class="mt-1"></div>
+						</div>
+						<div class="mb-4 position-relative">
+							<label for="pass1" class="form-label fw-bold fs-6"
+								style="font-size: 10px;">비밀번호</label> <input type="password"
+								class="form-control rounded-0 shadow-none fs-6 pe-5" id="pass1"
+								name="pass1"
+								style="border: none; border-bottom: 1px solid #ccc; font-size: 10px; outline: none;">
+						</div>
+						<div class="mb-4">
+							<label for="pass2" class="form-label fw-bold fs-6"
+								style="font-size: 10px;">비밀번호 확인</label> <input type="password"
+								class="form-control rounded-0 shadow-none fs-6 pe-5" id="pass2"
+								name="pass2"
+								style="border: none; border-bottom: 1px solid #ccc; font-size: 10px; outline: none;">
+						</div>
+
+						<div class="mb-4">
+							<label for="mobile2" class="form-label fw-bold fs-6"
+								style="font-size: 10px;">전화번호</label>
+							<div class="row g-2">
+								<div class="col-md-4">
+									<select class="form-select form-control" name="mobile1"
+										id="mobile1">
+										<option>010</option>
+										<option>011</option>
+										<option>016</option>
+										<option>017</option>
+										<option>018</option>
+										<option>019</option>
+									</select>
+								</div>
+								<div class="col-md-4">
+									<input type="text"
+										class="form-control rounded-0 shadow-none fs-6" id="mobile2"
+										name="mobile2" maxlength="4"
+										style="border: none; border-bottom: 1px solid #ccc; font-size: 10px; outline: none;">
+								</div>
+								<div class="col-md-4">
+									<input type="text"
+										class="form-control rounded-0 shadow-none fs-6" id="mobile3"
+										name="mobile3" maxlength="4"
+										style="border: none; border-bottom: 1px solid #ccc; font-size: 10px; outline: none;">
+								</div>
+							</div>
+						</div>
+						<div class="mb-4">
+							<label for="emailId" class="form-label fw-bold fs-6"
+								style="font-size: 10px;">이메일 주소</label>
+							<div class="row align-items-center g-2">
+								<div class="col-4">
+									<input type="text"
+										class="form-control rounded-0 shadow-none fs-6" id="emailId"
+										name="emailId" placeholder="예) DropWin"
+										style="border: none; border-bottom: 1px solid #ccc; font-size: 10px; outline: none;">
+								</div>
+								<div class="col-1">@</div>
+								<div class="col-4">
+									<input type="text"
+										class="form-control rounded-0 shadow-none fs-6"
+										id="emailDomain" name="emailDomain" placeholder="직접입력"
+										style="border: none; border-bottom: 1px solid #ccc; font-size: 10px; outline: none;">
+								</div>
+								<div class="col-3">
+									<select class="form-select form-control" name="selectDomain"
+										id="selectDomain">
+										<option>직접입력</option>
+										<option>네이버</option>
+										<option>다음</option>
+										<option>한메일</option>
+										<option>구글</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="form-check mb-3">
+							<input type="checkbox" class="form-check-input" id="allCheck">
+							<label class="form-check-label fw-bold" for="allCheck">모두
+								동의 (선택 동의 항목 포함)</label>
+						</div>
+
+						<div class="form-check mb-2">
+							<input type="checkbox" class="form-check-input custom-checkbox"
+								id="essOption1" name="essOption" value="true"> <label
+								class="form-check-label" for="essOption1">[필수] 만 14세
+								이상입니다</label>
+						</div>
+						<div class="form-check mb-2">
+							<input type="checkbox" class="form-check-input custom-checkbox"
+								id="essOption2" name="essOption" value="true"> <label
+								class="form-check-label" for="essOption2">[필수] 이용약관 동의</label>
+						</div>
+						<div class="form-check mb-4">
+							<input type="checkbox" class="form-check-input custom-checkbox"
+								id="unOption" name="unOption" value="true"> <label
+								class="form-check-label" for="unOption">[선택] 광고성 정보 수신
+								동의</label>
+						</div>
+
+						<div class="mb-4 text-center">
+							<input type="submit" value="가입하기" class="btn btn-dark w-100">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<script th:src="@{/js/jquery-1.11.0.min.js}"></script>
+		<script th:src="@{/js/jquery-migrate-1.2.1.min.js}"></script>
+		<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+		<script th:src="@{/js/templatemo.js}"></script>
+		<script th:src="@{/js/custom.js}"></script>
+		<script th:src="@{/js/member.js}"></script>
+	</div>
+</body>
+</html>

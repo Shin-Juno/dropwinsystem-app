@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+
+<div th:fragment="header" class="row border-bottom">
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-light shadow">
+			<div
+				class="container d-flex justify-content-between align-items-center">
+
+				<a class="navbar-brand text-success logo h1 align-self-center"
+					th:href="@{/home}"> <img class="img-fluid"
+					th:src="@{/img/DropWin_Web.png}" alt="DropWin 로고" id="main_logo">
+				</a>
+
+				<button class="navbar-toggler border-0" type="button"
+					data-bs-toggle="collapse" data-bs-target="#templatemo_main_nav"
+					aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div
+					class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between"
+					id="templatemo_main_nav">
+					<div class="flex-fill">
+						<ul
+							class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
+							<li class="nav-item"><a class="nav-link fw-semibold"
+								th:href="@{/home}">홈</a></li>
+							<li class="nav-item"><a class="nav-link fw-semibold"
+								th:href="@{/shop}">기획경매</a></li>
+							<li class="nav-item"><a class="nav-link fw-semibold"
+								th:href="@{/itemForm}">물품등록</a></li>
+							<li class="nav-item"><a class="nav-link fw-semibold"
+								th:href="@{/noticeList}">커뮤니티</a></li>
+						</ul>
+					</div>
+
+					<div class="navbar align-self-center d-flex">
+						 <a class="nav-icon position-relative text-decoration-none"
+							th:href="@{/favorites}"> <i
+							class="fa fa-fw fa-heart text-dark mr-1"></i>
+						</a>
+
+						<!-- 로그인 시 채팅 드롭다운 -->
+						<div th:if="${session.loginUser}" class="dropdown d-inline">
+							<a
+								class="nav-icon position-relative text-decoration-none dropdown-toggle"
+								href="#" id="chatDropdown" role="button"
+								data-bs-toggle="dropdown" aria-expanded="false"> <i
+								class="fa fa-fw fa-comments text-dark mr-2"></i> <span
+								id="main-chat-unread-dot"
+								class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+								style="display: none;"> <span class="visually-hidden">New
+										messages</span>
+							</span>
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end"
+								aria-labelledby="chatDropdown">
+								<li><a class="dropdown-item text-center fw-bold"
+									th:href="@{/mypage/inbox}">전체 채팅 보기</a></li>
+							</ul>
+						</div>
+
+						<!-- 로그인 시 유저 드롭다운 -->
+						<div th:if="${session.loginUser}" class="dropdown d-inline">
+							<a
+								class="nav-icon position-relative text-decoration-none dropdown-toggle"
+								href="#" id="userDropdown" role="button"
+								data-bs-toggle="dropdown" aria-expanded="false"> <i
+								class="fa fa-fw fa-user text-dark mr-3"></i>
+							</a>
+
+							<ul class="dropdown-menu dropdown-menu-end"
+								aria-labelledby="userDropdown">
+								<li class="dropdown-item fw-bold"
+									th:text="${session.loginUser.name} + '님'"></li>
+								<li th:if="${session.loginUser.id == 'admin'}"><a
+									class="dropdown-item" th:href="@{/pendingList}">물품 등록 요청 현황</a>
+								</li>
+								<!-- 헤더 드롭다운 메뉴의 링크들을 수정했습니다. -->
+								<li><a class="dropdown-item" th:href="@{/reservation}">나의
+										입찰 현황</a></li>
+								<li><a class="dropdown-item" th:href="@{/calendar}">일정관리</a></li>
+								<li><a class="dropdown-item" th:href="@{/memberUpdate}">정보수정</a></li>
+								<li><a class="dropdown-item" th:href="@{/memberDelete}">회원탈퇴</a></li>
+								<!-- 회원탈퇴 추가 -->
+								<li><a class="dropdown-item" th:href="@{/memberLogout}">로그아웃</a></li>
+
+							</ul>
+						</div>
+
+						<a class="nav-icon position-relative text-decoration-none"
+							th:unless="${session.loginUser}" th:href="@{/loginForm}"> <i
+							class="fa fa-fw fa-user text-dark mr-3"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</div>
+
+</div>
+</html>

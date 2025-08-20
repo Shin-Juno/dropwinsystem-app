@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>등록 대기 물품 목록</title>
+<link rel="stylesheet" th:href="@{/css/templatemo.css}">
+<style>
+.pending-card {
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 20px;
+	margin-bottom: 20px;
+	background-color: #fff;
+	display: flex;
+	gap: 20px;
+	align-items: flex-start;
+}
+
+.pending-card img {
+	width: 120px;
+	height: 120px;
+	object-fit: cover;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+}
+
+.pending-info-container {
+    display: flex;
+    flex-grow: 1;
+    gap: 20px;
+}
+
+.pending-info, .pending-details {
+	flex: 1;
+}
+
+.pending-info h3, .pending-details h3 {
+	font-size: 20px;
+	margin-bottom: 10px;
+	color: #333;
+}
+
+.pending-info p, .pending-details p {
+	margin: 4px 0;
+	color: #555;
+}
+
+.page-title {
+	text-align: center;
+	margin-top: 40px;
+	margin-bottom: 30px;
+	font-size: 36px;
+	color: #333;
+}
+
+.no-items {
+	text-align: center;
+	color: #888;
+	font-size: 18px;
+	margin-top: 50px;
+}
+
+.pending-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-left: 20px;
+}
+
+.pending-actions button {
+	padding: 8px 15px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 14px;
+	color: white;
+	transition: background-color 0.3s ease;
+	min-width: 80px;
+}
+
+.pending-actions .approve-btn {
+	background-color: #4CAF50;
+}
+
+.pending-actions .approve-btn:hover {
+	background-color: #45a049;
+}
+
+.pending-actions .reject-btn {
+	background-color: #f44336;
+}
+
+.pending-actions .reject-btn:hover {
+	background-color: #da190b;
+}
+
+.flash-message {
+	padding: 10px;
+	margin-bottom: 20px;
+	border-radius: 5px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.flash-message.success {
+	background-color: #d4edda;
+	color: #155724;
+	border: 1px solid #c3e6cb;
+}
+
+.flash-message.error {
+	background-color: #f8d7da;
+	color: #721c24;
+	border: 1px solid #f5c6cb;
+}
+</style>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<div class="container">
+			<h1 class="page-title">등록 대기 물품 목록</h1>
+
+			<div th:if="${message}" class="flash-message success">
+				<p th:text="${message}"></p>
+			</div>
+			<div th:if="${error}" class="flash-message error">
+				<p th:text="${error}"></p>
+			</div>
+
+			<div th:if="${#lists.isEmpty(pendingItems)}" class="no-items">
+				현재 등록 대기 중인 물품이 없습니다.</div>
+
+			<div th:each="item : ${pendingItems}" class="pending-card">
+				<!-- 이미지 영역 -->
+				<div>
+					<img
+						th:if="${item.imagePaths != null and !#strings.isEmpty(item.imagePaths)}"
+						th:src="@{'/auction_uploads/' + ${#strings.arraySplit(item.imagePaths, ',')[0]}}"
+						alt="물품 이미지"
+						onerror="this.onerror=null;this.src='/images/no-image.png';" />
+
+					<div
+						th:if="${item.imagePaths == null or #strings.isEmpty(item.imagePaths)}"
+						class="image-preview-area"
+						style="display: flex; align-items: center; justify-content: center; width: 120px; height: 120px; border: 1px solid #ccc; border-radius: 5px; background-color: #f0f0f0;">
+						<span class="placeholder" style="color: #888;">No Image</span>
+					</div>
+				</div>
+
+                <div class="pending-info-container">
+				    <!-- 기본 정보 영역 -->
+				    <div class="pending-info">
+					    <h3 th:text="${item.name}">물품명</h3>
+					    <p>
+						    <strong>분류:</strong> <span th:text="${item.category}">분류</span>
+					    </p>
+					    <p>
+						    <strong>시작가:</strong> <span
+							    th:text="${#numbers.formatInteger(item.startPrice, 3, 'COMMA')} + '원'">0원</span>
+					    </p>
+					    <p>
+						    <strong>즉시구매가:</strong> <span th:if="${item.buyNowPrice != null}"
+							    th:text="${#numbers.formatInteger(item.buyNowPrice, 3, 'COMMA')} + '원'">-</span>
+						    <span th:if="${item.buyNowPrice == null}">없음</span>
+					    </p>
+					    <p>
+						    <strong>거래 방식:</strong> <span th:text="${item.transactionMethod}">거래방식</span>
+					    </p>
+					    <p>
+						    <strong>판매 종료 시간:</strong> <span
+							    th:text="${#temporals.format(item.endTime, 'yyyy-MM-dd HH:mm')}">종료
+							    시간</span>
+					    </p>
+					    <p>
+						    <strong>등록 요청일:</strong> <span
+							    th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}">등록일</span>
+					    </p>
+					    <p>
+						    <strong>환불 정책:</strong> <span th:text="${item.returnPolicy}">환불
+							    정책</span>
+					    </p>
+				    </div>
+                    <!-- 상세 정보 영역 -->
+                    <div class="pending-details">
+                        <h3>상세 정보</h3>
+                        <p><strong>사이즈:</strong> <span th:text="${item.size}"></span></p>
+                        <p><strong>출시년도:</strong> <span th:text="${item.releaseYear}"></span></p>
+                        <p><strong>국가:</strong> <span th:text="${item.country}"></span></p>
+                        <p><strong>재질:</strong> <span th:text="${item.material}"></span></p>
+                        <p><strong>상태:</strong> <span th:text="${item.itemCondition}"></span></p>
+                        <p><strong>색상:</strong> <span th:text="${item.color}"></span></p>
+                        <p><strong>브랜드:</strong> <span th:text="${item.brand}"></span></p>
+                        <p><strong>특징:</strong> <span th:text="${item.features}"></span></p>
+                    </div>
+                </div>
+
+				<!-- 버튼 영역 -->
+				<div class="pending-actions">
+					<form th:action="@{/admin/updateStatus}" method="post">
+						<input type="hidden" name="itemId" th:value="${item.id}" /> <input
+							type="hidden" name="action" value="approve" />
+						<button type="submit" class="approve-btn">승인</button>
+					</form>
+					<form th:action="@{/admin/updateStatus}" method="post">
+						<input type="hidden" name="itemId" th:value="${item.id}" /> <input
+							type="hidden" name="action" value="reject" />
+						<button type="submit" class="reject-btn">거절</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>

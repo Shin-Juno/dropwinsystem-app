@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"		
+		layout:decorate="~{layouts/main_layout}">
+		
+<head>
+	<title>DropWin - updateForm</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<link rel="apple-touch-icon" href="img/apple-icon.png">
+	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+	
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/templatemo.css">
+	<link rel="stylesheet" href="css/custom.css">
+	
+	<!-- Load fonts style after rendering the layout styles -->
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+	<link rel="stylesheet" href="css/fontawesome.min.css">
+	
+	<script src="https://kit.fontawesome.com/47be2e00b6.js"
+		crossorigin="anonymous"></script>
+</head>
+		
+	<!--/* content */-->
+	<th:block layout:fragment="content">
+		<div class="container py-5">
+			<div class="row">
+				<div class="col-lg-2">
+					<div class="community-menu-section">
+						<h3>커뮤니티</h3>
+						<ul class="list-unstyled templatemo-accordion mb-0">
+							<li><a href="noticeList"
+								class="collapsed d-flex justify-content-between h3 text-decoration-none">
+									공지사항 </a></li>
+							<li><a href="board"
+								class="collapsed d-flex justify-content-between h3 text-decoration-none">
+									자유게시판 </a></li>
+							<li><a href="guide"
+								class="collapsed d-flex justify-content-between h3text-decoration-none">
+									경매지식 </a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-lg-9">
+					<div class="board-write-container mt-4">
+						<h2 class="fs-3 fw-bold" th:text="#{app.update.title}">수정하기</h2>
+						<p class="content-text">
+								<strong>Dropwin</strong>경매의 공지를 수정합니다.
+						</p>
+					</div>  
+					<form name="noUpdateForm" action="noUpdate" id="noUpdateForm" class="row g-3 border-primary" method="post">
+						<input type="hidden" name="noticeId" th:value="${notice.noticeId}">
+						<input type="hidden" name="pageNum" th:value="${pageNum}">
+						<!--/*
+							검색 리스트에서 들어온 요청일 경우 다시 keyword에 해당하는 
+							검색 리스트로 돌려보내기 위해서 아래의 파라미터가 필요하다.  
+						*/-->
+						<th:block th:if=${searchOption}>
+							<input type="hidden" name="type" th:value="${ type }" />
+							<input type="hidden" name="keyword" th:value="${ keyword }" />
+						</th:block>						
+						<div class="form-group mb-3">
+							<label for="writer" class="form-label">글쓴이</label>
+							<input type="text" class="form-control" name="writer" id="writer" 
+								th:value="${notice.writer}" readonly>
+						</div>
+						<div class="form-group mb-3">
+							<label for="title" class="form-label">제 목</label>
+							<input type="text" class="form-control" name="title"  
+								id="title" th:value="${notice.title}">
+						</div>
+						<div class="form-group mb-3">
+							<label for="content" class="form-label">내 용</label>
+							<textarea class="form-control" name="content" id="content" 
+								rows="10">[[${notice.content}]]</textarea>
+						</div>
+						<div class="form-group mb-3">
+							<label for="addFile" class="form-label fw-bold">첨부파일</label> 
+							<input type="file" class="form-control" id="addFile" name="addFile">
+							<div th:if="${notice.attachFile != null and notice.attachFile != ''}"
+								class="mt-2">
+								현재 파일: <span th:text="${notice.attachFile}"></span>
+							</div>
+						</div>
+						<div class="board-actions text-end">
+							<input type="submit" value="수정하기" class="btn btn-outline-dark"/>
+							&nbsp;&nbsp;<a th:href="@{/noticeDetail(noticeId=${notice.noticeId})}"
+										class="btn btn-outline-dark">취소</a>
+							<!--/* 
+								일반 게시 글 리스트에서 온 요청이면 일반 게시 글 리스트로 돌려보낸다.  
+							*/-->
+							<th:block th:unless="${searchOption}">									
+							&nbsp;&nbsp;<input class="btn btn-outline-dark" type="button" value="목록보기" 
+								th:onclick="@{|location.href='noticeList?pageNum=${pageNum}'|}"/>
+							</th:block>
+							<!--/* 
+								검색 리스트에서 온 요청이면 검색 리스트의 동일한 페이지로 돌려보낸다.
+							*/-->							
+							<th:block th:if="${searchOption}">									
+							&nbsp;&nbsp;<input class="btn btn-outline-dark" type="button" value="목록보기" 
+								th:onclick="@{|location.href='noticeList?pageNum=${pageNum}&type=${type}&keyword=${keyword}'|}"/>
+							</th:block>
+						</div>						
+					</form>
+				</div>
+			</div>
+		</div>
+	</th:block>
+	
+	<script src="js/jquery-1.11.0.min.js"></script>
+	<script src="js/jquery-migrate-1.2.1.min.js"></script>
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/templatemo.js"></script>
+	<script src="js/custom.js"></script>
+</html>			

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dropwinsystem.app.mapper.MemberMapper">
+
+	<!-- 회원 id에 해당하는 회원 정보를 반환하는 맵핑 구문 -->
+	<select id="getMember" resultType="com.dropwinsystem.app.domain.Member">
+		SELECT id, name, pass, email, mobile, ess_option AS essOption,
+		       un_option AS unOption, reg_date AS regDate, role,
+		       provider, provider_id AS providerId
+		FROM members
+		WHERE id = #{id}
+	</select>
+
+	<!-- 회원 정보를 추가하는 맵핑 구문 -->
+	<insert id="addMember" parameterType="com.dropwinsystem.app.domain.Member">
+		INSERT INTO members (
+			id, name, pass, email, mobile, ess_option, un_option,
+			reg_date, role, provider, provider_id
+		) VALUES (
+			#{id}, #{name}, #{pass}, #{email}, #{mobile}, #{essOption},
+			#{unOption}, NOW(), #{role}, #{provider}, #{providerId}
+		)
+	</insert>
+
+	<!-- 회원 테이블에서 id에 해당하는 비밀번호를 가져오는 맵핑 구문 -->
+	<select id="memberPassCheck" resultType="String">
+		SELECT pass
+		FROM members
+		WHERE id = #{id}
+	</select>
+
+	<!-- 회원 정보를 수정하는 맵핑 구문 -->
+	<update id="updateMember" parameterType="com.dropwinsystem.app.domain.Member">
+		UPDATE members 
+		SET name = #{name},
+			email = #{email},
+			mobile = #{mobile},
+			ess_option = #{essOption},
+			un_option = #{unOption},
+			reg_date = NOW(),
+			role = #{role},
+			provider = #{provider},
+			provider_id = #{providerId}
+		<if test="pass != null and !pass.isEmpty()">
+			, pass = #{pass}
+		</if>
+		WHERE id = #{id}
+	</update>
+	
+	<!-- id로 회원 정보를 찾아 반환하는 맵핑 구문 -->
+	<select id="selectMemberById" resultType="com.dropwinsystem.app.domain.Member">
+		SELECT id, name, pass, email, mobile, ess_option AS essOption, un_option AS unOption, reg_date AS regDate,
+		       role, provider, provider_id AS providerId
+		FROM members
+		WHERE id = #{id}
+	</select>
+	
+	<!-- 이름으로 회원 정보를 찾아 반환하는 맵핑 구문 -->
+	<select id="findByName" resultType="com.dropwinsystem.app.domain.Member">
+		SELECT id, name, pass, email, mobile, ess_option AS essOption, un_option AS unOption, reg_date AS regDate,
+		       role, provider, provider_id AS providerId
+		FROM members
+		WHERE name = #{name}
+	</select>
+
+	<!-- 이름과 전화번호로 회원 정보를 찾아 반환하는 맵핑 구문 -->
+	<select id="findByNameAndMobile" resultType="com.dropwinsystem.app.domain.Member">
+		SELECT id, name, pass, email, mobile, ess_option AS essOption, un_option AS unOption, reg_date AS regDate,
+		       role, provider, provider_id AS providerId
+		FROM members
+		WHERE name = #{name} AND mobile = #{mobile}
+	</select>
+	
+	<!-- 아이디와 이메일로 회원 정보를 찾아 반환하는 맵핑 구문 -->
+	<select id="findByIdAndEmail" resultType="com.dropwinsystem.app.domain.Member">
+		SELECT id, name, pass, email, mobile, ess_option AS essOption, un_option AS unOption, reg_date AS regDate,
+		       role, provider, provider_id AS providerId
+		FROM members
+		WHERE id = #{id} AND email = #{email}
+	</select>
+
+	<!-- 회원 ID에 해당하는 모든 입찰 정보를 삭제하는 맵핑 구문 -->
+    <delete id="deleteBidsByMemberId" parameterType="String">
+        DELETE FROM bids WHERE user_id = #{id}
+    </delete>
+
+	<!-- 회원 탈퇴를 위한 맵핑 구문 -->
+	<delete id="deleteMember" parameterType="String">
+		DELETE FROM members WHERE id = #{id}
+	</delete>
+</mapper>

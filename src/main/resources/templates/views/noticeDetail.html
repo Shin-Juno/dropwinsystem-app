@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
+
+<head>
+<title>DropWin - 공지 상세</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="apple-touch-icon" href="img/apple-icon.png">
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/templatemo.css">
+<link rel="stylesheet" href="css/custom.css">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+<link rel="stylesheet" href="css/fontawesome.min.css">
+
+<style>
+	#recommend {
+		display: flex;
+		justify-content: flex-end;
+		gap: 12px;
+		margin-top: 10px;
+	}
+
+	.btnCount {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 16px;
+		border-radius: 30px;
+		font-size: 15px;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		background-color: #f2f2f2; /* 연한 회색 배경 */
+		color: #000000; /* 텍스트 및 아이콘 색상: 검정 */
+		border: 1px solid #dcdcdc;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	}
+
+	.btnCount:hover {
+		background-color: #e0e0e0;
+		transform: scale(1.05);
+	}
+
+	.btnCount i {
+		color: #000000; /* 따봉 아이콘 색상도 검정 */
+		font-size: 16px;
+	}
+
+	.likeCount {
+		font-weight: bold;
+		color: #000000; /* 따봉 수 숫자 색상도 검은색 */
+	}
+</style>
+
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<script src="js/reply.js"></script>
+		<div class="container py-5">
+			<div class="row">
+				<div class="col-lg-2">
+					<form name="checkForm" id="checkForm">
+						<input type="hidden" name="noticeId" id="noticeId" th:value="${notice.noticeId}"/>
+						<input type="hidden" name="pageNum" th:value="${pageNum}"/>
+
+						<th:block th:if=${searchOption}>
+							<input type="hidden" name="type" th:value="${ type }" />
+							<input type="hidden" name="keyword" th:value="${ keyword }" />
+						</th:block>					
+					</form>
+					<div class="community-menu-section">
+						<h3>커뮤니티</h3>
+						<ul class="list-unstyled templatemo-accordion mb-0">
+							<li><a href="noticeList"
+								class="collapsed d-flex justify-content-between h3 text-decoration-none">
+									공지사항 </a></li>
+							<li><a href="board"
+								class="collapsed d-flex justify-content-between h3 text-decoration-none">
+									자유게시판 </a></li>
+							<li><a href="guide"
+								class="collapsed d-flex justify-content-between h3 text-decoration-none">
+									경매지식 </a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-lg-9">
+					<div class="board-detail-container mt-4">
+						<h3 class="notice">공지 상세</h3>
+						<p class="content-text">
+							<strong>Dropwin</strong>경매의 게시글 상세 내용입니다.
+						</p>
+						<table class="board-detail-info-table">
+							<tr class="board-title-row">
+								<td class="detail-label">제목</td>
+								<td class="detail-value"><span class="board-type-badge"
+									th:if="${notice.isNotice == false}"></span> <span
+									th:text="${notice.title}">공지 제목</span></td>
+							</tr>
+							<tr>
+								<td class="detail-label">작성자</td>
+								<td th:text="${notice.writer}"></td>
+							</tr>
+							<tr>
+								<td class="detail-label">등록일</td>
+								<td class="detail-value">[[${
+									#dates.format(notice.regDate, 'yyyy-MM-dd HH:mm:dd') }]]</td>
+								<td class="detail-label">조회수</td>
+								<td class="detail-value" th:text="${notice.viewCount}"></td>
+							</tr>
+							<tr
+								th:if="${notice.attachFile != null and notice.attachFile != ''}">
+								<td class="detail-label">첨부파일</td>
+								<td class="detail-value"><th:block
+										th:if="${ not #strings.isEmpty(notice.attachFile) }">
+										<a th:href="@{|fileDownload?fileName=${notice.attachFile}|}">다운로드</a>
+									</th:block> <th:block
+										th:unless="${ not #strings.isEmpty(notice.attachFile) }">
+								   	첨부파일 없음
+								</th:block></td>
+							</tr>
+						</table>
+						<div class="board-content">
+							<p th:text="${notice.content}"></p>
+						</div>
+						<div class="board-nav-section">
+							<div class="board-nav-item prev-post" th:if="${prevNotice}">
+								<a th:href="@{/noticeDetail(noticeId=${prevNotice.noticeId})}">
+									<i class="bi bi-caret-up-fill"></i> <span class="nav-label">이전글</span>
+									<span class="nav-text" th:text="${prevNotice.title}"></span>
+								</a>
+							</div>
+							<div class="board-nav-item next-post" th:if="${nextNotice}">
+								<a th:href="@{/noticeDetail(noticeId=${nextNotice.noticeId})}">
+									<i class="bi bi-caret-down-fill"></i> <span class="nav-label">다음글</span>
+									<span class="nav-text" th:text="${nextNotice.title}"></span>
+								</a>
+							</div>
+						</div>
+						
+						<div class="row mt-5">
+							<div id="recommend" class="text-end">
+								<span id="likeCount" class="btnCount text-primary" style="cursor: pointer;"> 
+									<i class="fas fa-thumbs-up"></i>&nbsp;
+									<span class="likeCount" th:text="${notice.likeCount}"></span>
+								</span>
+								<span id="dislikeCount" class="btnCount text-primary" style="cursor: pointer;">
+									<i class="fas fa-thumbs-down"></i>&nbsp;
+									<span class="likeCount" th:text="${notice.dislikeCount}"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					
+					<div class="board-actions">
+						<div class="col text-center">
+							<!-- 관리자 권한을 세션에 ROLE_ADMIN 으로 저장 -->
+							<th:block th:if="${loginUser != null and loginUser.id == 'admin'}">
+								<input class="btn btn-outline-dark" type="button" id="noDetailUpdate" value="수정하기"/>
+								&nbsp;&nbsp;<input class="btn btn-outline-dark" type="button" id="noDetailDelete" value="삭제하기"/>
+							</th:block>
+							
+							<th:block th:unless="${searchOption}">									
+							&nbsp;&nbsp;<input class="btn btn-outline-dark" type="button" value="목록보기" 
+								th:onclick="@{|location.href='noticeList?pageNum=${pageNum}'|}"/>
+							</th:block>
+													
+							<th:block th:if="${searchOption}">									
+							&nbsp;&nbsp;<input class="btn btn-outline-dark" type="button" value="목록보기" 
+								th:onclick="@{|location.href='noticeList?pageNum=${pageNum}&type=${type}&keyword=${keyword}'|}"/>
+							</th:block>
+						</div>
+					</div>
+					
+					<a href="#" id="scrollToTopBtn" class="top-button"> TOP <i
+						class="bi bi-caret-up"></i></a>
+				</div>
+			</div>
+		</div>
+	</th:block>
+	<script src="js/jquery-1.11.0.min.js"></script>
+	<script src="js/jquery-migrate-1.2.1.min.js"></script>
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/templatemo.js"></script>
+	<script src="js/custom.js"></script>
+	<script src="js/noFormcheck.js"></script>		
+</body>
+</html>

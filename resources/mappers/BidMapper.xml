@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dropwinsystem.app.mapper.BidMapper">
+
+    <resultMap id="bidResultMap" type="com.dropwinsystem.app.domain.Bid">
+        <id property="id" column="id"/>
+        <result property="itemId" column="item_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="bidPrice" column="bid_price"/>
+        <result property="bidTime" column="bid_time"/>
+        <result property="itemName" column="item_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="itemEndTime" column="item_end_time"/>
+        <result property="itemImagePath" column="item_image_path"/>
+    </resultMap>
+
+    <insert id="insertBid" parameterType="com.dropwinsystem.app.domain.Bid" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO bids (
+            item_id, user_id, bid_price, bid_time
+        ) VALUES (
+            #{itemId}, #{userId}, #{bidPrice}, NOW()
+        )
+    </insert>
+
+    <select id="findBidsByUserId" parameterType="string" resultMap="bidResultMap">
+        SELECT
+            b.id,
+            b.item_id,
+            b.user_id,
+            b.bid_price,
+            b.bid_time,
+            i.name AS item_name,
+            <!-- ⭐⭐ 이 부분을 SUBSTRING_INDEX로 수정했습니다. ⭐⭐ -->
+            SUBSTRING_INDEX(i.image_paths, ',', 1) AS item_image_path,
+            m.name AS user_name,
+            i.end_time AS item_end_time 
+        FROM bids b
+        JOIN items i ON b.item_id = i.id
+        JOIN members m ON b.user_id = m.id
+        WHERE b.user_id = #{userId}
+        ORDER BY b.bid_time DESC
+    </select>
+
+    <select id="findMaxBidPriceByItemId" parameterType="int" resultType="java.lang.Integer">
+        SELECT MAX(bid_price)
+        FROM bids
+        WHERE item_id = #{itemId}
+    </select>
+    
+    <select id="findBidsByItemIdOrderByBidTimeDesc" parameterType="int" resultMap="bidResultMap">
+        SELECT
+            b.id,
+            b.item_id,
+            b.user_id,
+            b.bid_price,
+            b.bid_time,
+            i.name AS item_name,
+            m.name AS user_name,
+            i.end_time AS item_end_time 
+        FROM bids b
+        JOIN items i ON b.item_id = i.id
+        JOIN members m ON b.user_id = m.id
+        WHERE b.item_id = #{itemId}
+        ORDER BY b.bid_time DESC
+    </select>
+
+</mapper>

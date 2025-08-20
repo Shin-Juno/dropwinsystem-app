@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
+<head>
+<title>DropWin - join</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="apple-touch-icon" href="img/apple-icon.png">
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/templatemo.css">
+<link rel="stylesheet" href="css/custom.css">
+<link rel="stylesheet" href="css/fontawesome.min.css">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+<script src="https://kit.fontawesome.com/47be2e00b6.js"
+	crossorigin="anonymous"></script>
+<script src="js/member.js"></script>
+<style>
+body {
+	font-family: 'Roboto', sans-serif;
+	background-color: #f8f9fa;
+}
+
+.container.py-5 {
+	padding-top: 3rem !important;
+	padding-bottom: 3rem !important;
+}
+
+.form-label {
+	font-size: 0.875rem !important;
+	color: #343a40;
+	margin-bottom: 0.25rem;
+}
+
+.form-control {
+	border: 1px solid #ced4da;
+	border-radius: 0.25rem !important;
+	padding: 0.75rem 1rem;
+	font-size: 1rem !important;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+	border-color: #80bdff;
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-group .form-control {
+	border-bottom: 1px solid #ced4da;
+}
+
+.btn-dark {
+	background-color: #343a40;
+	border-color: #343a40;
+	padding: 0.75rem 1.25rem;
+	font-size: 1rem;
+	border-radius: 0.25rem;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-dark:hover {
+	background-color: #23272b;
+	border-color: #1d2124;
+}
+
+.btn-sm {
+	padding: 0.35rem 0.75rem;
+	font-size: 0.875rem;
+}
+
+.alert {
+	font-size: 0.9rem;
+	padding: 0.75rem 1.25rem;
+	margin-bottom: 1rem;
+}
+
+#idCheckMsg {
+	font-size: 0.8rem !important;
+}
+
+.custom-checkbox .form-check-input {
+	border-radius: 0.25em;
+	border: 1px solid #ced4da;
+}
+
+.custom-checkbox .form-check-input:checked {
+	background-color: #343a40;
+	border-color: #343a40;
+}
+
+.form-check-label {
+	font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<div class="container py-5">
+			<div class="row justify-content-center">
+				<div class="col-md-6 bg-white p-4 rounded shadow-sm">
+					<h2 class="text-center mb-4">회원 정보 입력</h2>
+					<form action="joinResult" name="joinForm" method="post"
+						id="joinForm">
+						<input type="hidden" name="isIdCheck" id="isIdCheck" value="false" />
+						<div class="mb-4">
+							<label for="name" class="form-label fw-bold">이름</label> <input
+								type="text" class="form-control" name="name" id="name">
+						</div>
+						
+						<div class="mb-4 position-relative">
+							<label for="pass1" class="form-label fw-bold">비밀번호</label> <input
+								type="password" class="form-control pe-5" name="pass1"
+								id="pass1">
+						</div>
+						<div class="mb-4">
+							<label for="pass2" class="form-label fw-bold">비밀번호 확인</label> <input
+								type="password" class="form-control" name="pass2" id="pass2">
+						</div>
+						<div class="mb-4">
+							<label for="emailId" class="form-label fw-bold">이메일</label>
+							<div class="row align-items-center g-2">
+								<div class="col-md-4">
+									<input type="text" class="form-control" name="emailId"
+										id="emailId" placeholder="아이디">
+								</div>
+								<div class="col text-center">@</div>
+								<div class="col-md-4">
+									<input type="text" class="form-control" name="emailDomain"
+										id="emailDomain" placeholder="도메인">
+								</div>
+								<div class="col-md-3">
+									<select class="form-select form-control" name="selectDomain"
+										id="selectDomain">
+										<option>직접입력</option>
+										<option>네이버</option>
+										<option>다음</option>
+										<option>한메일</option>
+										<option>구글</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="mb-4">
+							<label for="mobile2" class="form-label fw-bold">휴대폰</label>
+							<div class="row g-2">
+								<div class="col-md-4">
+									<select class="form-select form-control" name="mobile1"
+										id="mobile1">
+										<option>010</option>
+										<option>011</option>
+										<option>016</option>
+										<option>017</option>
+										<option>018</option>
+										<option>019</option>
+									</select>
+								</div>
+								<div class="col-md-4">
+									<input type="text" class="form-control" name="mobile2"
+										id="mobile2" maxlength="4">
+								</div>
+								<div class="col-md-4">
+									<input type="text" class="form-control" name="mobile3"
+										id="mobile3" maxlength="4">
+								</div>
+							</div>
+						</div>
+						<div class="mb-4">
+							<label class="form-label fw-bold">메일 수신여부</label>
+							<div class="row">
+								<div class="col-md-3">
+									<div class="form-check">
+										<input type="radio" class="form-check-input" name="emailGet"
+											id="emailOk" value="true"> <label
+											class="form-check-label" for="emailOk">수신함</label>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-check">
+										<input type="radio" class="form-check-input" name="emailGet"
+											id="emailNo" value="false"> <label
+											class="form-check-label" for="emailNo">수신안함</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="mb-4 text-center">
+							<input type="submit" value="가입하기" class="btn btn-dark w-100">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</th:block>
+	<script src="js/jquery-1.11.0.min.js"></script>
+	<script src="js/jquery-migrate-1.2.1.min.js"></script>
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/templatemo.js"></script>
+	<script src="js/custom.js"></script>
+</body>
+</html>

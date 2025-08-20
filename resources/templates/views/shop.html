@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
+
+<head>
+<title>DropWin - 경매물품</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="apple-touch-icon" th:href="@{/img/apple-icon.png}">
+<link rel="shortcut icon" type="image/x-icon"
+	th:href="@{/img/favicon.ico}">
+
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/css/templatemo.css}">
+<link rel="stylesheet" th:href="@{/css/custom.css}">
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+<link rel="stylesheet" th:href="@{/css/fontawesome.min.css}">
+
+<style>
+.breadcrumb-custom {
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.breadcrumb-custom a {
+	text-decoration: none;
+	color: #555;
+	margin: 0 3px;
+}
+
+.breadcrumb-custom a i.bi {
+	font-size: 17px;
+	margin-right: 3px;
+}
+
+/* 검색 버튼 호버 스타일 */
+.input-group-append .btn:hover {
+	background-color: #A9A9A9 !important; /* 회색으로 변경 */
+	color: white !important;
+}
+
+/* 페이지네이션 링크 호버 및 활성화 스타일 */
+.pagination .page-item .page-link {
+	transition: background-color 0.3s ease, color 0.3s ease;
+	/* 부드러운 전환 효과 */
+}
+
+.pagination .page-item .page-link:hover {
+	background-color: #e9ecef; /* 연한 회색 배경 */
+	color: #495057; /* 어두운 텍스트 색상 */
+}
+
+.pagination .page-item.active .page-link {
+	background-color: #6c757d; /* 활성화된 페이지를 회색으로 변경 */
+	border-color: #6c757d; /* 테두리 색상도 회색으로 변경 */
+	color: white !important; /* 활성화된 상태에서 텍스트 색상을 흰색으로 강제 적용 */
+}
+
+.pagination .page-item.active .page-link:hover {
+	background-color: #5a6268; /* 활성화된 상태의 호버 색상 (조금 더 진한 회색) */
+	border-color: #5a6268;
+}
+
+.pagination .page-item.disabled .page-link {
+	background-color: #f8f9fa; /* 비활성화된 버튼 배경색 */
+	color: #6c757d; /* 비활성화된 버튼 텍스트색 */
+	cursor: not-allowed;
+}
+
+.item-wap .card-img {
+    width: 100%; /* 부모 요소 너비에 맞춤 */
+    height: 200px; /* 원하는 고정 높이 지정 (예시: 200px) */
+    object-fit: cover; /* 이미지가 잘리더라도 비율을 유지하면서 영역을 채움 */
+    /* object-fit: contain; /* 이미지가 잘리지 않게 전체를 보여주되, 빈 공간이 생길 수 있음 */
+}
+
+/* 이미지를 감싸는 .card 요소에 overflow: hidden; 추가 (선택 사항) */
+.item-wap .card.rounded-0 {
+    overflow: hidden; /* 이미지가 .card-img 영역을 벗어나지 않도록 함 */
+}
+
+/* 하트 버튼 기본 스타일 (이미 존재하지만, 명시적으로 보여줌) */
+.product-overlay .btn {
+    opacity: 0; /* 평소에는 숨겨져 있다가 */
+    transition: opacity 0.3s ease; /* 부드러운 전환 효과 추가 */
+}
+
+/* 카드에 호버 시 하트 버튼 보이게 함 */
+.item-wap .card.rounded-0:hover .product-overlay .btn {
+    opacity: 1; /* 호버 시 나타남 */
+}
+
+
+/* 하트 버튼 호버 스타일 */
+.product-overlay .btn:hover {
+    background-color: #4c4c4c !important; /* 보라색 계열로 변경 (예시) */
+    color: white !important; /* 텍스트/아이콘 색상 흰색으로 변경 */
+    border-color: #4c4c4c !important; /* 테두리 색상도 변경 */
+
+}
+
+/* (선택 사항) 아이콘 자체에 대한 호버 스타일 */
+.product-overlay .btn:hover .far.fa-heart {
+    transition: opacity 0.3s;
+}
+</style>
+</head>
+
+<body>
+	<th:block layout:fragment="content">
+		<div class="container py-5">
+			<div class="row">
+				<div class="col-lg-3">
+					<div class="breadcrumb-custom">
+						<a th:href="@{/home}" class="home"> <i
+							class="bi bi-house-door-fill"></i> 홈
+						</a> <a th:href="@{/shop}"> &gt; 경매물품</a>
+					</div>
+					<h3 class="pb-4">경매물품</h3>
+					<ul class="list-unstyled templatemo-accordion">
+						<li class="pb-3"><a
+							class="collapsed d-flex justify-content-between h3 text-decoration-none"
+							th:href="@{/shop(category='축구', filter='all', searchQuery='', page=0, size=${itemsPage.size})}"
+							th:classappend="${currentCategory == '축구' ? 'text-primary' : 'text-dark'}">
+								축구 </a></li>
+						<li class="pb-3"><a
+							class="collapsed d-flex justify-content-between h3 text-decoration-none"
+							th:href="@{/shop(category='농구', filter='all', searchQuery='', page=0, size=${itemsPage.size})}"
+							th:classappend="${currentCategory == '농구' ? 'text-primary' : 'text-dark'}">
+								농구 </a></li>
+						<li class="pb-3"><a
+							class="collapsed d-flex justify-content-between h3 text-decoration-none"
+							th:href="@{/shop(category='야구', filter='all', searchQuery='', page=0, size=${itemsPage.size})}"
+							th:classappend="${currentCategory == '야구' ? 'text-primary' : 'text-dark'}">
+								야구 </a></li>
+						<li class="pb-3"><a
+							class="collapsed d-flex justify-content-between h3 text-decoration-none"
+							th:href="@{/shop(category='골프', filter='all', searchQuery='', page=0, size=${itemsPage.size})}"
+							th:classappend="${currentCategory == '골프' ? 'text-primary' : 'text-dark'}">
+								골프 </a></li>
+						<li class="pb-3"><a
+							class="collapsed d-flex justify-content-between h3 text-decoration-none"
+							th:href="@{/shop(category='러닝', filter='all', searchQuery='', page=0, size=${itemsPage.size})}"
+							th:classappend="${currentCategory == '러닝' ? 'text-primary' : 'text-dark'}">
+								러닝 </a></li>
+						<li class="pb-3"><a
+							class="collapsed d-flex justify-content-between h3 text-decoration-none"
+							th:href="@{/shop(category='탁구', filter='all', searchQuery='', page=0, size=${itemsPage.size})}"
+							th:classappend="${currentCategory == '탁구' ? 'text-primary' : 'text-dark'}">
+								탁구 </a></li>
+						<li class="pb-3"><a
+							class="collapsed d-flex justify-content-between h3 text-decoration-none"
+							th:href="@{/shop(category='수영', filter='all', searchQuery='', page=0, size=${itemsPage.size})}"
+							th:classappend="${currentCategory == '수영' ? 'text-primary' : 'text-dark'}">
+								수영 </a></li>
+					</ul>
+				</div>
+
+				<div class="col-lg-9">
+					<div class="row">
+						<div class="col-md-6 pb-4">
+							<ul class="list-inline shop-top-menu pb-3 pt-1">
+								<li class="list-inline-item"><a
+									class="h5 text-dark text-decoration-none mr-3"
+									th:href="@{/shop(category=${currentCategory}, filter='all', searchQuery='', page=0, size=${itemsPage.size})}"
+									th:classappend="${currentFilter == 'all' ? 'text-primary' : ''}">전체</a>
+								</li>
+								<li class="list-inline-item">
+									<!-- 인기순 정렬 토글 링크와 아이콘을 수정했습니다. -->
+									<a
+									class="h5 text-dark text-decoration-none mr-3"
+									th:href="@{/shop(category=${currentCategory}, filter=${currentFilter == 'popular' ? 'popular_asc' : 'popular'}, searchQuery='', page=0, size=${itemsPage.size})}"
+									th:classappend="${currentFilter == 'popular' or currentFilter == 'popular_asc' ? 'text-primary' : ''}">
+                                        인기순
+                                        <i th:if="${currentFilter == 'popular'}" class="bi bi-arrow-up-short"></i>
+                                        <i th:if="${currentFilter == 'popular_asc'}" class="bi bi-arrow-down-short"></i>
+                                    </a>
+								</li>
+								<li class="list-inline-item">
+									<!-- 최신순 정렬 토글 링크와 아이콘을 수정했습니다. -->
+									<a
+									class="h5 text-dark text-decoration-none mr-3"
+									th:href="@{/shop(category=${currentCategory}, filter=${currentFilter == 'recent' ? 'recent_asc' : 'recent'}, searchQuery='', page=0, size=${itemsPage.size})}"
+									th:classappend="${currentFilter == 'recent' or currentFilter == 'recent_asc' ? 'text-primary' : ''}">
+                                        최신순
+                                        <i th:if="${currentFilter == 'recent'}" class="bi bi-arrow-up-short"></i>
+                                        <i th:if="${currentFilter == 'recent_asc'}" class="bi bi-arrow-down-short"></i>
+                                    </a>
+								</li>
+							</ul>
+						</div>
+
+						<div class="col-md-6 pb-4 d-flex justify-content-end">
+							<form th:action="@{/shop}" method="get" class="input-group"
+								style="max-width: 300px;">
+								<input type="hidden" name="category"
+									th:value="${currentCategory}">
+								<input type="hidden" name="filter" th:value="${currentFilter}">
+								<input type="hidden" name="page" th:value="0">
+								<input type="hidden" name="size" th:value="${itemsPage.size}">
+								<input type="text" class="form-control" name="searchQuery"
+									th:value="${currentSearchQuery}" placeholder="검색어를 입력하세요"
+									style="border-top-left-radius: 20px; border-bottom-left-radius: 20px; height: 38px;">
+								<div class="input-group-append">
+									<button class="btn" type="submit"
+										style="background-color: #d1d1d1; color: white; border-top-right-radius: 20px; border-bottom-right-radius: 20px; height: 38px; border: none;">
+										검색</button>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<div class="row mb-3">
+						<div class="col-12">
+							<p class="text-muted fs-6">
+								<span
+									th:if="${currentSearchQuery != null and !currentSearchQuery.isEmpty()}"
+									th:text="|'${currentSearchQuery}' 검색결과|"></span> <span
+									th:if="${(currentSearchQuery == null or currentSearchQuery.isEmpty()) and currentCategory != null and !currentCategory.isEmpty()}"
+									th:text="|'${currentCategory}' 검색결과|"></span> <span
+									th:if="${(currentSearchQuery == null or currentSearchQuery.isEmpty()) and (currentCategory == null or currentCategory.isEmpty())}">
+									<span th:if="${currentFilter == 'all'}" th:text="'전체 검색결과'"></span>
+									<!-- 인기순/비인기순 정렬 상태를 표시하는 텍스트를 수정했습니다. -->
+									<span th:if="${currentFilter == 'popular'}" th:text="'인기순 검색결과'"></span>
+									<span th:if="${currentFilter == 'popular_asc'}" th:text="'비인기순 검색결과'"></span>
+									<!-- 최신순/비최신순 정렬 상태를 표시하는 텍스트를 수정했습니다. -->
+									<span th:if="${currentFilter == 'recent'}" th:text="'최신순 검색결과'"></span>
+									<span th:if="${currentFilter == 'recent_asc'}" th:text="'오래된순 검색결과'"></span>
+								</span>
+							</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<th:block th:if="${#lists.isEmpty(itemsPage.content)}">
+							<div class="col-12 text-center py-5">
+								<p class="text-muted fs-5">검색 결과가 없습니다.</p>
+							</div>
+						</th:block>
+						<th:block th:unless="${#lists.isEmpty(itemsPage.content)}">
+							<div class="col-md-4" th:each="item : ${itemsPage.content}">
+								<div class="card mb-4 item-wap rounded-0"
+									th:if="${item.status == 'approved'}">
+									<div class="card rounded-0">
+										<a th:href="@{/itemDetail(itemId=${item.id})}"> <img
+											class="card-img rounded-0 img-fluid"
+											th:src="${item.imagePathList.isEmpty() ? '/img/default-item.png' : '/auction_uploads/' + item.imagePathList.get(0)}"
+											th:alt="${item.name}">
+										</a>
+										<div
+											class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+											<div class="btn btn-light text-dark rounded-circle shadow-sm"
+												data-bs-toggle="modal" data-bs-target="#favoriteModal">
+												<i class="far fa-heart"></i>
+											</div>
+										</div>
+									</div>
+									<div class="card-body p-2">
+										<a th:href="@{/item/{itemId}(itemId=${item.id})}"
+											class="text-decoration-none text-dark d-block">
+											<p class="mb-1 text-truncate" style="font-size: 14px;" th:text="${item.name}"></p>
+										</a>
+										<h5 class="text-dark fw-bold" th:text="${'현재 입찰 가격: ' + #numbers.formatInteger(item.currentPrice ?: item.startPrice, 0, 'COMMA') + '원'}"></h5>
+
+										<!-- 즉시 구매 가격 표시 코드 -->
+                                        <h5 th:if="${item.buyNowPrice != null}" class="text-dark fw-bold">
+                                            즉시 구매 가격: <span class="text-success" th:text="${#numbers.formatInteger(item.buyNowPrice, 0, 'COMMA')} + '원'"></span>
+                                        </h5>
+
+										<div class="d-flex justify-content-start align-items-center mt-2"
+											style="font-size: 13px; color: gray;">
+											<span class="me-2" th:text="${'입찰 ' + item.bidCount + ' 회'}"></span>
+											<i class="bi bi-dot"></i> <span class="ms-2"
+												th:text="${#temporals.format(item.endTime, 'yyyy.MM.dd HH:mm')}"></span>
+										</div>
+										<div style="font-size: 13px; color: #555;">
+											판매자 <strong style="color: #8a2be2"
+												th:text="${item.sellerName}"></strong> <i
+												class="bi bi-patch-check-fill" style="color: #8a2be2;"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</th:block>
+					</div>
+
+					<div class="row">
+						<ul class="pagination pagination-lg justify-content-end">
+							<li class="page-item"
+								th:classappend="${itemsPage.hasPrevious() ? '' : 'disabled'}">
+								<a
+								class="page-link rounded-0 mr-3 shadow-sm border-top-0 border-left-0"
+								th:href="@{/shop(category=${currentCategory}, filter=${currentFilter}, searchQuery=${currentSearchQuery}, page=${itemsPage.number - 1}, size=${itemsPage.size})}"
+								tabindex="-1">이전</a>
+							</li>
+
+							<th:block
+								th:with="startPage=${T(java.lang.Math).max(0, itemsPage.number - 1)}, endPage=${T(java.lang.Math).min(itemsPage.totalPages - 1, itemsPage.number + 1)}">
+								<li class="page-item"
+									th:each="i : ${#numbers.sequence(startPage, endPage)}"
+									th:classappend="${i == itemsPage.number ? 'active' : ''}">
+									<a
+									class="page-link rounded-0 mr-3 shadow-sm border-top-0 border-left-0"
+									th:href="@{/shop(category=${currentCategory}, filter=${currentFilter}, searchQuery=${currentSearchQuery}, page=${i}, size=${itemsPage.size})}"
+									th:text="${i + 1}">1</a>
+								</li>
+							</th:block>
+
+							<li class="page-item"
+								th:classappend="${itemsPage.hasNext() ? '' : 'disabled'}">
+								<a
+								class="page-link rounded-0 shadow-sm border-top-0 border-left-0"
+								th:href="@{/shop(category=${currentCategory}, filter=${currentFilter}, searchQuery=${currentSearchQuery}, page=${itemsPage.number + 1}, size=${itemsPage.size})}">다음</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="favoriteModal" tabindex="-1"
+			aria-labelledby="favoriteModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header bg-dark text-white">
+						<h5 class="modal-title" id="favoriteModalLabel">관심경매 등록</h5>
+						<button type="button" class="btn-close btn-close-white"
+							data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p class="fw-bold mb-2">관심경매 등록이 완료되었습니다.</p>
+						<p class="text-muted">마이페이지 > 관심경매 목록에서 확인할 수 있습니다.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-dark" data-bs-dismiss="modal">확인</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</th:block>
+
+	<script th:src="@{/js/jquery-1.11.0.min.js}"></script>
+	<script th:src="@{/js/jquery-migrate-1.2.1.min.js}"></script>
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/js/templatemo.js}"></script>
+	<script th:src="@{/js/custom.js}"></script>
+</body>
+
+</html>

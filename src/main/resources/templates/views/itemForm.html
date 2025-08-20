@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>판매 물품 등록</title>
+<!-- custom.css 파일 링크 -->
+<style>
+/* Modal Styles */
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 배경 */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000; /* 다른 요소 위에 표시 */
+	visibility: hidden; /* 기본적으로 숨김 */
+	opacity: 0; /* 투명하게 시작 */
+	transition: visibility 0s, opacity 0.3s ease-in-out; /* 부드러운 전환 효과 */
+}
+
+.modal-overlay.show {
+	visibility: visible; /* 표시 */
+	opacity: 1; /* 불투명하게 */
+}
+
+.modal-content {
+	background-color: #fff;
+	padding: 30px;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+	text-align: center;
+	max-width: 400px; /* 모달 최대 너비 */
+	width: 90%; /* 반응형 너비 */
+	transform: translateY(-20px); /* 모달 등장 애니메이션 효과 */
+	transition: transform 0.3s ease-in-out;
+}
+
+.modal-overlay.show .modal-content {
+	transform: translateY(0); /* 모달 등장 애니메이션 끝 */
+}
+
+.modal-content h3 {
+	font-size: 24px;
+	color: #333;
+	margin-top: 20px;
+	margin-bottom: 50px;
+}
+
+.modal-content button {
+	background-color: #000000;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+	background-color: #828282;
+}
+
+.form-group label {
+	font-weight: 500 !important; /* 굵게 */
+	color: #000; /* 검은색 */
+}
+</style>
+</head>
+<body>
+	<th:block layout:fragment="content">
+		<div class="container">
+			<h1 class="page-title">판매 물품 등록</h1>
+			<form id="itemRegisterForm" method="post" class="product-form"
+				enctype="multipart/form-data">
+				<div class="form-section">
+					<h2>기본 정보</h2>
+					<div class="form-group">
+						<label for="itemCategory">분류</label> <select id="itemCategory"
+							name="category" class="form-control" required>
+							<option value="">선택하세요</option>
+							<option value="soccer">축구</option>
+							<option value="basket-ball">농구</option>
+							<option value="base-ball">야구</option>
+							<option value="golf">골프</option>
+							<option value="running">런닝</option>
+							<option value="pingpong">탁구</option>
+							<option value="swim">수영</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="itemName">물품명</label> <input type="text" id="itemName"
+							name="name" class="form-control" placeholder="물품명을 입력하세요"
+							required>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="itemSize">사이즈</label> <input type="text"
+									id="itemSize" name="size" class="form-control"
+									placeholder="사이즈를 입력하세요">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="itemReleaseYear">발매년도</label> <input type="number"
+									id="itemReleaseYear" name="releaseYear" class="form-control"
+									placeholder="발매년도를 입력하세요 (예: 2023)">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="itemCountry">제조국</label> <input type="text"
+									id="itemCountry" name="country" class="form-control"
+									placeholder="제조국을 입력하세요">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="itemMaterial">재질</label> <input type="text"
+									id="itemMaterial" name="material" class="form-control"
+									placeholder="재질을 입력하세요">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="itemCondition">상품상태</label> <select
+									id="itemCondition" name="itemCondition" class="form-control">
+									<option value="">선택하세요</option>
+									<option value="새상품">새상품</option>
+									<option value="최상">최상 (거의 새것)</option>
+									<option value="상">상 (사용감 적음)</option>
+									<option value="중">중 (사용감 있음)</option>
+									<option value="하">하 (사용감 많음)</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="itemColor">색상</label> <input type="text"
+									id="itemColor" name="color" class="form-control"
+									placeholder="색상을 입력하세요">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="itemBrand">브랜드</label> <input type="text"
+									id="itemBrand" name="brand" class="form-control"
+									placeholder="브랜드를 입력하세요">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="itemFeatures">특징</label> <input type="text"
+									id="itemFeatures" name="features" class="form-control"
+									placeholder="특징을 입력하세요 (예: 한정판, 방수 기능)">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-section">
+					<h2>가격 정보</h2>
+					<div class="form-group">
+						<label for="startPrice">시작가</label>
+						<div class="input-with-unit">
+							<input type="number" id="startPrice" name="startPrice"
+								class="form-control" placeholder="숫자만 입력하세요" required> <span>원</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="buyNowPrice">즉시 구매가 (선택 사항)</label>
+						<div class="input-with-unit">
+							<input type="number" id="buyNowPrice" name="buyNowPrice"
+								class="form-control" placeholder="숫자만 입력하세요"> <span>원</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="endTime">판매 종료 시간</label> <input type="datetime-local"
+							id="endTime" name="endTime" class="form-control" required>
+					</div>
+				</div>
+
+				<div class="form-section">
+					<h2>이미지 등록</h2>
+					<div class="form-group">
+						<label for="itemImage">이미지 파일</label> <input type="file"
+							id="itemImage" name="imageFile" multiple accept="image/*"
+							class="form-control-file">
+						<p class="help-text">최대 5개 이미지 등록 가능 (JPG, PNG)</p>
+					</div>
+					<div class="image-preview-area">
+						<div class="placeholder">이미지 미리보기</div>
+					</div>
+				</div>
+
+				<div class="form-section">
+					<h2>거래 정보</h2>
+					<div class="form-group">
+						<label for="transactionMethod">거래 방식</label> <select
+							id="transactionMethod" name="transactionMethod"
+							class="form-control" required>
+							<option value="">선택하세요</option>
+							<option value="delivery">택배</option>
+							<option value="direct">직거래</option>
+							<option value="both">택배 및 직거래</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="returnPolicy">환불 및 교환 정책</label>
+						<textarea id="returnPolicy" name="returnPolicy" rows="4"
+							class="form-control" placeholder="환불 및 교환 정책을 입력하세요"></textarea>
+					</div>
+				</div>
+
+				<div class="form-actions">
+					<button type="submit" class="btn primary">등록</button>
+					<button type="button" class="btn secondary" id="cancelButton">취소</button>
+				</div>
+			</form>
+		</div>
+
+		<!-- Success Modal (모달 HTML 추가) -->
+		<div id="successModal" class="modal-overlay">
+			<div class="modal-content">
+				<h3 id="modalMessage"></h3>
+				<button id="modalConfirmBtn">확인</button>
+			</div>
+		</div>
+
+		<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const itemImageInput = document.getElementById('itemImage');
+                const imagePreviewArea = document.querySelector('.image-preview-area');
+                const placeholder = imagePreviewArea.querySelector('.placeholder');
+
+                // 기존 이미지 미리보기 로직
+                itemImageInput.addEventListener('change', function(event) {
+                    imagePreviewArea.querySelectorAll('img').forEach(img => img.remove());
+                    if (placeholder) {
+                        placeholder.style.display = 'none';
+                    }
+
+                    const files = event.target.files;
+                    if (files.length === 0) {
+                        if (placeholder) {
+                            placeholder.style.display = 'block';
+                        }
+                        return;
+                    }
+
+                    const maxFiles = 5;
+                    const filesToProcess = Array.from(files).slice(0, maxFiles);
+
+                    filesToProcess.forEach(file => {
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.alt = '업로드된 이미지';
+                                img.style.maxWidth = '100px';
+                                img.style.maxHeight = '100px';
+                                img.style.border = '1px solid #ddd';
+                                img.style.borderRadius = '4px';
+                                img.style.objectFit = 'cover';
+                                imagePreviewArea.appendChild(img);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
+
+                // 모달 관련 요소 가져오기
+                const successModal = document.getElementById('successModal');
+                const modalMessage = document.getElementById('modalMessage');
+                const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+                const itemRegisterForm = document.getElementById('itemRegisterForm');
+
+                // 폼 제출 이벤트 핸들러
+                itemRegisterForm.addEventListener('submit', function(event) {
+                    event.preventDefault(); // 기본 폼 제출 동작 방지
+
+                    const formData = new FormData(itemRegisterForm); // 폼 데이터 객체 생성
+
+                    // Fetch API를 사용하여 서버에 비동기 POST 요청
+                    fetch('/item/register', {
+                        method: 'POST',
+                        body: formData // FormData 객체를 body에 직접 전달
+                    })
+                    .then(response => {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('로그인이 필요합니다.');
+                            window.location.href = '/loginForm';
+                            return Promise.reject('로그인이 필요합니다.'); // 추가적인 .then() 실행 방지
+                        }
+                        if (!response.ok) {
+                            // 서버 응답이 OK (200)가 아니면 오류 처리
+                            return response.json().then(errorData => {
+                                throw new Error(errorData.message || '서버 오류가 발생했습니다.');
+                            });
+                        }
+                        return response.json(); // JSON 응답 파싱
+                    })
+                    .then(data => {
+                        // 서버 응답이 성공 (status: "success")일 경우 모달 표시
+                        if (data.status === 'success') {
+                            modalMessage.textContent = data.message; // 모달 메시지 설정
+                            successModal.classList.add('show'); // 모달 표시 (CSS 클래스 추가)
+                        } else {
+                            // 서버에서 "error" 상태를 보냈을 경우 (예: 파일 생성 실패 등)
+                            alert('오류: ' + (data.message || '알 수 없는 오류가 발생했습니다.'));
+                        }
+                    })
+                    .catch(error => {
+                        // 네트워크 오류 또는 .then 블록에서 발생한 오류 처리
+                        console.error('폼 제출 중 오류 발생:', error);
+                    });
+                });
+
+                // 모달 확인 버튼 클릭 이벤트 핸들러
+                modalConfirmBtn.addEventListener('click', function() {
+                    successModal.classList.remove('show'); // 모달 숨김
+                    window.location.href = '/home'; // 메인 페이지로 리다이렉트
+                });
+
+                // 취소 버튼 클릭 이벤트 핸들러
+                const cancelButton = document.getElementById('cancelButton');
+                cancelButton.addEventListener('click', function() {
+                    window.location.href = '/home';
+                });
+            });
+        </script>
+	</th:block>
+</body>
+</html>

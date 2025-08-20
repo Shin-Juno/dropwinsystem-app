@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>dropwin - 일정관리</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap"
+	rel="stylesheet">
+
+<style>
+	body {
+		font-family: 'Noto Sans KR', sans-serif;
+		background: #f4f6f9;
+		margin: 0;
+		padding: 0;
+	}
+	
+	.container {
+		max-width: 960px;
+		margin: 0 auto;
+		padding: 40px 20px;
+		background: white;
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	}
+	
+	h1 {
+		font-size: 32px;
+		text-align: center; /* 가운데 정렬 */
+		margin-bottom: 30px;
+		color: #343a40;
+		font-weight: 700;
+	}
+	
+	.nav {
+		display: flex;
+		justify-content: center;
+		gap: 30px;
+		padding: 15px 0;
+		margin-bottom: 30px;
+		list-style: none;
+		border-radius: 10px;
+		background-color: #f1f3f5;
+		box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+	}
+	
+	.nav-link {
+		text-decoration: none;
+		color: #007bff;
+		font-weight: 600;
+		padding: 8px 14px;
+		border-radius: 6px;
+		transition: all 0.3s ease;
+	}
+	
+	.nav-link:hover {
+		background-color: #e7f1ff;
+		color: #0056b3;
+	}
+	
+	.fc .fc-button {
+		background-color: #007bff;
+		border: none;
+		color: white;
+		font-weight: 500;
+	}
+	
+	.fc .fc-button:hover {
+		background-color: #0056b3;
+	}
+	
+	.fc-day-sun a {
+		color: red !important;
+	}
+	
+	.fc-day-sat a {
+		color: red !important;
+	}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/ko.global.min.js"></script>
+
+</head>
+
+<body>
+	<div class="container">
+		<h1 class="my-4 text-center">DropWin 캘린더</h1>
+		<div class="flex-fill">
+			<ul class="nav">
+				<li class="nav-item"><a class="nav-link" href="home">홈</a></li>
+				<li class="nav-item"><a class="nav-link" href="shop">기획경매</a></li>
+				<li class="nav-item"><a class="nav-link" href="itemForm">물품등록</a></li>
+				<li class="nav-item"><a class="nav-link" href="noticeList">커뮤니티</a></li>
+			</ul>
+		</div>
+		<div id="calendar"></div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+	<script>
+	 $(document).ready(function () {
+		    let calendarTag = $('#calendar')[0]; // 캘린더 DOM
+
+		    let calendar = new FullCalendar.Calendar(calendarTag, {
+		        height: '550px',
+		        expandRows: true,
+		        slotMinTime: '00:00',
+		        slotMaxTime: '23:59',
+
+		        customButtons: {
+		            testButton: { text: "테스트버튼" }
+		        },
+
+		        headerToolbar: {
+		            left: 'prevYear,prev,next,nextYear today',
+		            center: 'title',
+		            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+		        },
+
+		        initialView: 'dayGridMonth',
+		        navLinks: true,
+		        editable: true,
+		        selectable: true,
+		        nowIndicator: true,
+		        dayMaxEvents: true,
+		        locale: 'ko',
+		        
+		        buttonText: {
+		            today: '오늘',
+		            month: '월',
+		            week: '주',
+		            day: '일',
+		            list: '목록'
+		        },
+
+		        headerToolbar: {
+		            left: 'prevYear,prev,next,nextYear today',
+		            center: 'title',
+		            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+		        },
+
+		        eventAdd: function (obj) { console.log("eventAdd : " + obj); },
+		        eventChange: function (obj) { console.log("eventChange : " + obj); },
+		        eventRemove: function (obj) { console.log("eventRemove : " + obj); },
+
+		        // 이벤트 불러오기 (Ajax 함수형태로 반드시 작성)
+		        events: function(fetchInfo, successCallback, failureCallback) {
+		        	  fetch('/calendar/calendarList')
+		        	    .then(res => res.json())
+		        	    .then(data => {
+		        	      const events = data.map(item => ({
+		        	        id: item.calendarNo,
+		        	        title: item.calendarTitle, // ✨ 여기도 item.title 대신 item.calendarTitle로 변경
+		        	        start: item.calendarStart, // ✨ item.start1 대신 item.calendarStart로 변경
+		        	        end: item.calendarEnd,     // ✨ item.end 대신 item.calendarEnd로 변경
+		        	        allDay: item.allDay,
+		        	        editable: true
+		        	      }));
+		        	      successCallback(events);
+		        	    })
+		        	    .catch((error) => { // 에러 객체도 받아서 로그 출력
+		        	      console.error("이벤트 로딩 실패:", error); // 디버깅을 위해 에러 로그 출력
+		        	      alert('이벤트 로딩 실패');
+		        	      failureCallback();
+		        	    });
+		        	},
+
+		        select: function(arg) {
+		            let title = prompt('일정 입력');
+		            if(title){
+		                let newData = {
+		                    calendarTitle: title, // ✨ 'title' 대신 'calendarTitle'로 변경 (DB/객체 필드명과 일치)
+		                    calendarStart: arg.start, // ✨ 'start' 대신 'calendarStart'로 변경
+		                    calendarEnd: arg.end, // ✨ 'end' 대신 'calendarEnd'로 변경
+		                    allDay: arg.allDay
+		                };
+		                $.ajax({
+		                    url: "/calendar/calendarSave", // ✨ 여기에 /calendar/ 추가
+		                    method: "POST",
+		                    dataType: "json",
+		                    data: JSON.stringify(newData),
+		                    contentType: 'application/json',
+		                    success: function(data) {
+		                        if(data != null){
+		                            calendar.addEvent({
+		                                id: data.calendarNo,
+		                                title: data.calendarTitle, // ✨ 'data.title' 대신 'data.calendarTitle'
+		                                start: data.calendarStart, // ✨ 'data.start1' 대신 'data.calendarStart'
+		                                end: data.calendarEnd,     // ✨ 'data.end' 대신 'data.calendarEnd'
+		                                allDay: data.allDay,
+		                                editable: true
+		                            });
+		                        }
+		                    },
+		                    error: function(xhr, status, error) { // 에러 처리 추가
+		                        console.error("일정 저장 실패:", status, error, xhr.responseText);
+		                        alert("일정 저장 실패!");
+		                    }
+		                });
+		            }
+		            calendar.unselect();
+		        },
+
+		        eventClick: function(arg) {
+		            if(confirm("선택한 일정을 삭제하시겠습니까?")){
+		                $.ajax({
+		                    type: "DELETE",
+		                    url: "/calendar/calendarDelete?calendarNo=" + encodeURIComponent(arg.event.id), // ✨ 여기에 /calendar/ 추가
+		                    success: function(data) {
+		                        if(data === "success"){
+		                            alert("삭제하였습니다.");
+		                            arg.event.remove();
+		                        } else {
+		                            alert("오류가 발생하였습니다");
+		                        }
+		                    },
+		                    error: function(xhr, status, error) { // 에러 처리 추가
+		                        console.error("일정 삭제 실패:", status, error, xhr.responseText);
+		                        alert("일정 삭제 실패!");
+		                    }
+		                });
+		            }
+		        },
+
+		        eventDrop: function(arg){
+		            let event = {
+		                calendarNo: arg.event.id, // ✨ 'id' 대신 'calendarNo'로 변경
+		                calendarTitle: arg.event.title, // ✨ 'title' 대신 'calendarTitle'로 변경
+		                calendarStart: arg.event.start, // ✨ arg.event._instance.range.start 대신 arg.event.start로 변경
+		                calendarEnd: arg.event.end ? arg.event.end : null, // ✨ arg.event._instance.range.end 대신 arg.event.end로 변경
+		                allDay: arg.event.allDay
+		            };
+		            $.ajax({
+		                url: '/calendar/eventUpdate/' + arg.event.id, // ✨ 여기에 /calendar/ 추가
+		                method: 'PUT',
+		                contentType: 'application/json',
+		                data: JSON.stringify(event),
+		                success: function(data) { // 성공/실패 여부를 알 수 있도록 success/error 콜백 추가
+		                    if(data === "success") {
+		                        console.log("일정 업데이트 성공");
+		                    } else {
+		                        alert("일정 업데이트 실패!");
+		                    }
+		                },
+		                error: function(xhr, status, error) {
+		                    console.error("일정 업데이트 실패:", status, error, xhr.responseText);
+		                    alert("일정 업데이트 실패!");
+		                }
+		            });
+		        },
+
+		        eventResize: function(arg){
+		            let event = {
+		                calendarNo: arg.event.id, // ✨ 'id' 대신 'calendarNo'로 변경
+		                calendarTitle: arg.event.title, // ✨ 'title' 대신 'calendarTitle'로 변경
+		                calendarStart: arg.event.start, // ✨ arg.event._instance.range.start 대신 arg.event.start로 변경
+		                calendarEnd: arg.event.end ? arg.event.end : null, // ✨ arg.event._instance.range.end 대신 arg.event.end로 변경
+		                allDay: arg.event.allDay
+		            };
+		            $.ajax({
+		                url: '/calendar/eventUpdate/' + arg.event.id, // ✨ 여기에 /calendar/ 추가
+		                method: 'PUT',
+		                contentType: 'application/json',
+		                data: JSON.stringify(event),
+		                success: function(data) { // 성공/실패 여부를 알 수 있도록 success/error 콜백 추가
+		                    if(data === "success") {
+		                        console.log("일정 리사이즈 업데이트 성공");
+		                    } else {
+		                        alert("일정 리사이즈 업데이트 실패!");
+		                    }
+		                },
+		                error: function(xhr, status, error) {
+		                    console.error("일정 리사이즈 업데이트 실패:", status, error, xhr.responseText);
+		                    alert("일정 리사이즈 업데이트 실패!");
+		                }
+		            });
+		        }
+
+		    });
+
+		    calendar.render();
+		});
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dropwinsystem.app.mapper.ItemDetailMapper">
+
+    <insert id="insertItemDetail" parameterType="com.dropwinsystem.app.domain.ItemDetail">
+        INSERT INTO ITEMS_DETAIL (
+            ITEM_ID, SIZE, RELEASE_YEAR, COUNTRY, MATERIAL, item_condition, COLOR, BRAND, FEATURES
+        ) VALUES (
+            #{itemId}, #{size}, #{releaseYear}, #{country}, #{material}, #{itemCondition}, #{color}, #{brand}, #{features}
+        )
+    </insert>
+
+    <select id="getItemDetailByItemId" parameterType="int" resultType="com.dropwinsystem.app.domain.ItemDetail">
+        SELECT
+            ITEM_ID as itemId,
+            SIZE as size,
+            RELEASE_YEAR as releaseYear,
+            COUNTRY as country,
+            MATERIAL as material,
+            item_condition as itemCondition,
+            COLOR as color,
+            BRAND as brand,
+            FEATURES as features
+        FROM ITEMS_DETAIL
+        WHERE ITEM_ID = #{itemId}
+    </select>
+
+</mapper>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
+
+<head>
+<title>DropWin - 회원 정보 수정</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="apple-touch-icon" href="img/apple-icon.png">
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/templatemo.css">
+<link rel="stylesheet" href="css/custom.css">
+
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+<link rel="stylesheet" href="css/fontawesome.min.css">
+
+<script src="https://kit.fontawesome.com/47be2e00b6.js"
+	crossorigin="anonymous"></script>
+</head>
+
+<body>
+	<div layout:fragment="content">
+		<div
+			class="container d-flex align-items-center justify-content-center"
+			style="min-height: 100vh;">
+			<div class="w-100" style="max-width: 450px;">
+				<div class="text-center mb-4">
+					<p class="text-muted small mt-2">회원 정보를 수정하려면 아래 양식을 작성하세요.</p>
+				</div>
+				<div style="height: 20px;"></div>
+
+				<div th:if="${error}" class="alert alert-danger text-center"
+					style="font-size: 14px;">
+					<span th:text="${error}"></span>
+				</div>
+				<div th:if="${message}" class="alert alert-success text-center"
+					style="font-size: 14px;">
+					<span th:text="${message}"></span>
+				</div>
+
+				<form id="memberUpdateForm" th:action="@{/memberUpdateResult}" method="post">
+					<div class="mb-4">
+						<label for="id" class="form-label fw-bold fs-6">아이디</label>
+						<input type="text"
+							class="form-control rounded-0 shadow-none fs-6" id="id"
+							name="id" th:value="${loginUser.id}" readonly
+							style="border: none; border-bottom: 1px solid #ccc; font-size: 14px; outline: none;">
+					</div>
+					<div class="mb-4">
+						<label for="name" class="form-label fw-bold fs-6">이름</label>
+						<input type="text"
+							class="form-control rounded-0 shadow-none fs-6" id="name"
+							name="name" th:value="${loginUser.name}" required
+							style="border: none; border-bottom: 1px solid #ccc; font-size: 14px; outline: none;">
+					</div>
+					<div class="mb-4">
+						<label for="email" class="form-label fw-bold fs-6">이메일</label>
+						<input type="email"
+							class="form-control rounded-0 shadow-none fs-6" id="email"
+							name="email" th:value="${loginUser.email}" required
+							style="border: none; border-bottom: 1px solid #ccc; font-size: 14px; outline: none;">
+					</div>
+					<div class="mb-4">
+						<label for="mobile" class="form-label fw-bold fs-6">휴대폰 번호</label>
+						<input type="text"
+							class="form-control rounded-0 shadow-none fs-6" id="mobile"
+							name="mobile" th:value="${loginUser.mobile}" required
+							style="border: none; border-bottom: 1px solid #ccc; font-size: 14px; outline: none;">
+					</div>
+					
+					<div style="height: 20px;"></div>
+
+					<p class="text-muted small mt-2">비밀번호 변경 (선택사항)</p>
+					<div class="mb-4">
+						<label for="newPassword" class="form-label fw-bold fs-6">새 비밀번호</label>
+						<input type="password"
+							class="form-control rounded-0 shadow-none fs-6"
+							id="newPassword" name="newPassword"
+							placeholder="새 비밀번호를 입력하세요"
+							style="border: none; border-bottom: 1px solid #ccc; font-size: 14px; outline: none;">
+					</div>
+					<div class="mb-4">
+						<label for="newPasswordCheck" class="form-label fw-bold fs-6">새 비밀번호 확인</label>
+						<input type="password"
+							class="form-control rounded-0 shadow-none fs-6"
+							id="newPasswordCheck" name="newPasswordCheck"
+							placeholder="새 비밀번호를 다시 입력하세요"
+							style="border: none; border-bottom: 1px solid #ccc; font-size: 14px; outline: none;">
+					</div>
+					
+					<div style="height: 20px;"></div>
+
+					<p class="text-muted small mt-2">정보 수정을 위한 현재 비밀번호 확인</p>
+					<div class="mb-4">
+						<label for="currentPassword" class="form-label fw-bold fs-6">현재 비밀번호</label>
+						<input type="password"
+							class="form-control rounded-0 shadow-none fs-6"
+							id="currentPassword" name="currentPassword"
+							placeholder="회원정보를 수정하려면 현재 비밀번호를 입력하세요" required
+							style="border: none; border-bottom: 1px solid #ccc; font-size: 14px; outline: none;">
+					</div>
+
+					<button type="submit" id="btnUpdate"
+						class="btn login-btn w-100 py-2"
+						style="background-color: #d9d9d9; color: #ffffff; font-weight: 500; border-radius: 10px;">
+						수정 완료</button>
+				</form>
+				
+				<div class="text-center mt-3" style="font-size: 10px; color: #333;">
+					<a th:href="@{/home}" class="text-decoration-none mx-2 fs-6"
+						style="color: #333;">취소</a>
+				</div>
+				
+				<div style="height: 20px;"></div>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>

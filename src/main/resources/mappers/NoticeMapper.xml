@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dropwinsystem.app.mapper.NoticeMapper">
+
+    <!-- 공지 목록 -->
+    <select id="noticeList" parameterType="map" resultType="com.dropwinsystem.app.domain.Notice">
+        SELECT 
+            notice_id, title, writer, content, reg_date, view_count, is_notice AS isNotice
+        FROM notice
+        <where>
+            <if test="type == 'title'">
+                title LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="type == 'writer'">
+                writer LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="type == 'content'">
+                content LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY notice_id DESC
+        LIMIT #{startRow}, #{num}
+    </select>
+    
+    <select id="getIsNotices"
+		resultType="com.dropwinsystem.app.domain.Notice">
+		SELECT
+		notice_id,
+		title,
+		writer,
+		content,
+		view_count AS viewCount,
+		reg_date AS regDate,
+		attach_file,
+		is_notice AS isNotice
+		FROM notice
+		WHERE
+		is_notice = TRUE
+		ORDER BY notice_id DESC
+		LIMIT 3
+	</select>
+
+    <!-- 공지 개수 -->
+    <select id="getNoticeCount" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM notice
+        <where>
+            <if test="type == 'title'">
+                title LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="type == 'writer'">
+                writer LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="type == 'content'">
+                content LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+    
+    <select id="getNoticesCount" resultType="int">
+		SELECT COUNT(*) FROM
+		notice WHERE is_notice = TRUE
+	</select>
+
+    <!-- 공지 상세 -->
+    <select id="getNotice" parameterType="int" resultType="com.dropwinsystem.app.domain.Notice">
+        SELECT * FROM notice WHERE notice_id = #{noticeId}
+    </select>
+
+    <!-- 공지 등록 -->
+    <insert id="insertNotice" parameterType="com.dropwinsystem.app.domain.Notice" useGeneratedKeys="true" keyProperty="noticeId">
+        INSERT INTO notice(title, writer, content, reg_date, view_count, attach_file, like_count, dislike_count, is_notice)
+        VALUES(#{title}, #{writer}, #{content}, NOW(), 0, #{attachFile}, 0, 0, #{isNotice})
+    </insert>
+
+    <!-- 공지 수정 -->
+    <update id="updateNotice" parameterType="com.dropwinsystem.app.domain.Notice">
+        UPDATE notice
+        SET title = #{title},
+            content = #{content},
+            attach_file = #{attachFile},
+            reg_date = NOW()
+        WHERE notice_id = #{noticeId}
+    </update>
+
+    <!-- 공지 삭제 -->
+    <delete id="deleteNotice" parameterType="int">
+        DELETE FROM notice WHERE notice_id = #{noticeId}
+    </delete>
+    
+	<select id="getPrevNotice"
+		resultType="com.dropwinsystem.app.domain.Notice">
+		SELECT notice_id, title FROM notice WHERE notice_id &lt; #{noticeId} ORDER BY
+		notice_id DESC LIMIT 1
+	</select>
+
+	<select id="getNextNotice"
+		resultType="com.dropwinsystem.app.domain.Notice">
+		SELECT notice_id, title FROM notice WHERE notice_id &gt; #{noticeId} ORDER BY
+		notice_id ASC LIMIT 1
+	</select>
+
+    <!-- 조회수 증가 -->
+    <update id="increaseViewCount" parameterType="int">
+        UPDATE notice SET view_count = view_count + 1 WHERE notice_id = #{noticeId}
+    </update>
+
+    <!-- 좋아요/싫어요 증가 -->
+    <update id="updateLikeCount" parameterType="map">
+        UPDATE notice
+        SET
+        <if test="likeCount == 'likeCount'">
+            like_count = like_count + 1
+        </if>
+        <if test="likeCount == 'dislikeCount'">
+            dislike_count = dislike_count + 1
+        </if>
+        WHERE notice_id = #{noticeId}
+    </update>
+
+    <!-- 좋아요/싫어요 조회 -->
+    <select id="getLikeCount" parameterType="int" resultType="com.dropwinsystem.app.domain.Notice">
+        SELECT like_count, dislike_count FROM notice WHERE notice_id = #{noticeId}
+    </select>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dropwinsystem.app.mapper.FavoriteMapper">
+
+    <insert id="addFavorite" parameterType="com.dropwinsystem.app.domain.Favorite" useGeneratedKeys="true" keyProperty="favoriteId">
+        INSERT INTO FAVORITES (USER_ID, ITEM_ID)
+        VALUES (#{userId}, #{itemId})
+    </insert>
+
+    <delete id="removeFavorite">
+        DELETE FROM FAVORITES WHERE USER_ID = #{userId} AND ITEM_ID = #{itemId}
+    </delete>
+
+    <select id="selectFavoriteItemsByUserId" parameterType="String" resultType="com.dropwinsystem.app.domain.Item">
+        SELECT
+            i.id, i.category, i.name, i.start_price AS startPrice,
+            i.buy_now_price AS buyNowPrice, i.end_time AS endTime, i.image_paths AS imagePaths,
+            i.transaction_method AS transactionMethod, i.return_policy AS returnPolicy,
+            i.status, i.created_at AS createdAt, i.seller_id AS sellerId,
+            i.current_price AS currentPrice,
+            i.bid_count AS bidCount
+        FROM ITEMS i
+        JOIN FAVORITES f ON i.id = f.ITEM_ID
+        WHERE f.USER_ID = #{userId}
+        ORDER BY f.CREATED_AT DESC
+    </select>
+
+    <select id="isItemFavorited" resultType="int">
+        SELECT COUNT(*) FROM FAVORITES WHERE USER_ID = #{userId} AND ITEM_ID = #{itemId}
+    </select>
+
+</mapper>

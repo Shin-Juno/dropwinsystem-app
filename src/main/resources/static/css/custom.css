@@ -1,0 +1,73 @@
+/*
+Custom Css
+*/
+/* 일요일 날짜: 빨간색 */
+.fc-day-sun a {
+    color: red;
+}
+
+/* 토요일 날짜: 파란색 */
+.fc-day-sat a {
+    color: blue;
+}
+
+.fc-day-mon a{
+    color: gray;
+}
+
+.fc-day-tue a{
+    color: gray;
+}
+
+.fc-day-wed a {
+    color: gray;
+}
+.fc-day-thu a {
+    color: gray;
+}
+
+.fc-day-fri a {
+    color: gray;
+}
+
+.fc-button-primary {
+    color: red;
+}
+
+/* 연관 상품 슬라이더 카드 크기 및 간격 조정 */
+.related-products-slider .slick-slide {
+    /* Slick Carousel이 각 슬라이드에 적용하는 너비에 맞춰 카드 간격 조절 */
+    /* col-md-4가 너비를 제어하므로, 여기서는 간격만 조정합니다. */
+    padding: 0 10px; /* 슬라이드 좌우 패딩으로 카드 간격 확보 */
+    box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+    height: auto; /* 높이 자동 조절 */
+}
+
+.related-products-slider .slick-slide .card {
+    /* width: calc(100% - 20px) !important; 이전 규칙 제거 */
+    /* margin: 0 10px 20px 10px !important; 이전 규칙 제거 */
+    height: auto; /* 높이 자동 조절 */
+}
+
+/* 이미지 크기 재확인 및 강제 조정 */
+.related-products-slider .slick-slide .card-img {
+    width: 100% !important;
+    height: 200px !important; /* shop.html과 동일한 고정 높이 유지 */
+    object-fit: cover !important; /* 이미지가 잘리더라도 비율을 유지하면서 영역을 채움 */
+}
+
+/* Slick Carousel의 화살표 위치 조정 (필요시) */
+.related-products-slider .slick-prev,
+.related-products-slider .slick-next {
+    z-index: 10 !important; /* 화살표가 카드 위에 오도록 */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+.related-products-slider .slick-prev {
+    left: -25px !important; /* 왼쪽 화살표 위치 조정 */
+}
+
+.related-products-slider .slick-next {
+    right: -25px !important; /* 오른쪽 화살표 위치 조정 */
+}

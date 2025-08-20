@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dropwinsystem.app.mapper.CalendarMapper">
+    
+<!-- 일정 조회하기 -->
+    <select id="calendarList" resultType="com.dropwinsystem.app.domain.Calendar">
+        SELECT
+            calendar_no,
+            calendar_title AS calendarTitle,
+            DATE_FORMAT(calendar_start, '%Y-%m-%dT%H:%i:%s') AS calendarStart,
+            DATE_FORMAT(calendar_end, '%Y-%m-%dT%H:%i:%s') AS calendarEnd,
+            ALL_DAY
+        FROM calendar
+    </select>
+
+    <!-- 일정 저장하기 -->
+    <!-- 저장하고 생성된 no(key) 값을 return 시킨다 -->
+    <insert id="calendarSave" parameterType="com.dropwinsystem.app.domain.Calendar"
+        useGeneratedKeys="true" keyColumn="CALENDAR_NO" keyProperty="calendarNo">
+	    INSERT INTO calendar (
+	        calendar_title,
+	        calendar_start,
+	        calendar_end,
+	        ALL_DAY
+	    ) VALUES (
+	        #{calendarTitle},	
+	        STR_TO_DATE(#{calendarStart}, '%Y-%m-%d %H:%i:%s'),
+	        <choose>
+	            <when test="calendarEnd != null">
+	                STR_TO_DATE(#{calendarEnd}, '%Y-%m-%d %H:%i:%s')
+	            </when>
+	            <otherwise>
+	                STR_TO_DATE(#{calendarStart}, '%Y-%m-%d %H:%i:%s') <!-- 시작시간과 동일하게 설정 -->
+	            </otherwise>
+	        </choose>,
+	        #{allDay}
+	    )
+	</insert>
+
+    <!-- 일정 삭제하기 -->
+	<delete id="calendarDelete" parameterType="long">
+	    DELETE FROM calendar WHERE calendar_no = #{calendarNo}
+	</delete>
+
+
+    <!-- 일정 수정하기 -->
+    <update id="eventUpdate" parameterType="com.dropwinsystem.app.domain.Calendar">
+        UPDATE calendar SET
+		    calendar_title = #{calendarTitle},
+		    calendar_start = STR_TO_DATE(#{calendarStart}, '%Y-%m-%d %H:%i:%s'),
+		    calendar_end = STR_TO_DATE(#{calendarEnd}, '%Y-%m-%d %H:%i:%s'),
+		    ALL_DAY = #{allDay}
+		WHERE calendar_no = #{calendarNo}
+
+    </update>
+</mapper>

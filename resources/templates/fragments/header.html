@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="header" class="row border-bottom">
+
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-light shadow">
+			<div class="container d-flex justify-content-between align-items-center">
+
+				<a class="navbar-brand text-success logo h1 align-self-center" th:href="@{/home}">
+					<img class="img-fluid" th:src="@{/img/DropWin_Web.png}" alt="DropWin 로고" id="main_logo">
+				</a>
+
+				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+					data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="align-self-center collapse navbar-collapse flex-fill d-lg-flex justify-content-lg-between"
+					id="templatemo_main_nav">
+					<div class="flex-fill">
+						<ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
+							<li class="nav-item"><a class="nav-link fw-semibold" th:href="@{/home}">홈</a></li>
+							<li class="nav-item"><a class="nav-link fw-semibold" th:href="@{/shop}">기획경매</a></li>
+							<li class="nav-item"><a class="nav-link fw-semibold" th:href="@{/itemForm}">물품등록</a></li>
+							<li class="nav-item"><a class="nav-link fw-semibold" th:href="@{/noticeList}">커뮤니티</a></li>
+						</ul>
+					</div>
+
+					<div class="navbar align-self-center d-flex">
+						<div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
+							<div class="input-group">
+								<input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
+								<div class="input-group-text">
+									<i class="fa fa-fw fa-search"></i>
+								</div>
+							</div>
+						</div>
+
+						<a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal" data-bs-target="#templatemo_search">
+							<i class="fa fa-fw fa-search text-dark mr-2"></i>
+						</a>
+
+						<a class="nav-icon position-relative text-decoration-none" th:href="@{/favorites}"> <i
+								class="fa fa-fw fa-heart text-dark mr-1"></i>
+						</a>
+
+						<!-- 변경된 부분 시작: 로그인 시 채팅 기능 드롭다운 추가 -->
+						<div th:if="${session.loginUser}" class="dropdown d-inline">
+							<a class="nav-icon position-relative text-decoration-none dropdown-toggle" href="#" id="chatDropdown"
+								role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
+								<i class="fa fa-fw fa-comments text-dark mr-2"></i>
+								<span id="main-chat-unread-dot" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="display: none;">
+									<span class="visually-hidden">New messages</span>
+								</span>
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="chatDropdown">
+								<!-- 동적 채팅방 목록이 여기에 삽입됩니다 -->
+								<li><a class="dropdown-item text-center fw-bold" th:href="@{/mypage/inbox}">전체 채팅 보기</a></li>
+							</ul>
+						</div>
+
+						<div th:if="${session.loginUser}" class="dropdown d-inline">
+							<a class="nav-icon position-relative text-decoration-none dropdown-toggle" href="#" id="userDropdown"
+								role="button" data-bs-toggle="dropdown" aria-expanded="false"> <i
+									class="fa fa-fw fa-user text-dark mr-3"></i>
+							</a>
+
+							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+								<li class="dropdown-item fw-bold" th:text="${session.loginUser.name} + '님'"></li>
+								<li th:if="${session.loginUser.id == 'admin'}">
+									<a class="dropdown-item" th:href="@{/pendingList}">물품 등록 요청 현황</a>
+								</li>
+								<li><a class="dropdown-item" th:href="@{/member/update}">정보 수정</a></li>
+								<li><a class="dropdown-item" th:href="@{/reservation}">나의 입찰 현황</a></li>
+								<li><a class="dropdown-item" th:href="@{/calendar}">일정관리</a></li>
+								<li><a class="dropdown-item" th:href="@{/memberLogout}">로그아웃</a></li>
+							</ul>
+						</div>
+
+						<a class="nav-icon position-relative text-decoration-none"
+							th:unless="${session.loginUser}" th:href="@{/loginForm}"> <i
+							class="fa fa-fw fa-user text-dark mr-3"></i>
+						</a>
+
+					</div>
+				</div>
+			</div>
+		</nav>
+		<div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="w-100 pt-1 mb-5 text-right">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form action="" method="get" class="modal-content modal-body border-0 p-0">
+					<div class="input-group mb-2">
+						<input type="text" class="form-control" id="inputModalSearch" name="q"
+							placeholder="Search ...">
+						<button type="submit" class="input-group-text bg-success text-light">
+							<i class="fa fa-fw fa-search text-white"></i>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script src="js/jquery-1.11.0.min.js"></script>
+	<script src="js/jquery-migrate-1.2.1.min.js"></script>
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/templatemo.js"></script>
+	<script src="js/custom.js"></script>
+	</div>
+</html>

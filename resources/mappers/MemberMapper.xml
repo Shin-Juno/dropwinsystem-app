@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dropwinsystem.app.mapper.MemberMapper" >
+	<!-- 회원 id에 해당하는 회원 정보를 반환하는 맵핑 구문 -->
+	<select id="getMember" resultType="com.dropwinsystem.app.domain.Member">
+		SELECT id, name, pass, email, mobile, ess_option AS essOption, un_option AS unOption, reg_date AS regDate,
+		       role
+		FROM members
+		WHERE id = #{id}
+	</select>
+
+	<!-- 회원 정보를 추가하는 맵핑 구문 -->
+	<insert id="addMember" parameterType="com.dropwinsystem.app.domain.Member">
+		INSERT INTO members (
+			id, name, pass, email, mobile, ess_option, un_option, reg_date, role
+		) VALUES (
+			#{id}, #{name}, #{pass}, #{email}, #{mobile}, #{essOption}, #{unOption}, NOW(), #{role}
+		)
+	</insert>
+	
+	<!-- 회원 테이블에서 id에 해당하는 비밀번호를 가져오는 맵핑 구문 -->
+	<select id="memberPassCheck" resultType="String">
+		SELECT pass
+		FROM members
+		WHERE id = #{id}
+	</select>
+
+	<!-- 회원 정보를 수정하는 맵핑 구문 -->
+	<update id="updateMember" parameterType="com.dropwinsystem.app.domain.Member">
+		UPDATE members 
+		SET pass = #{pass},
+			email = #{email},
+			mobile = #{mobile},
+			ess_option = #{essOption},
+			un_option = #{unOption},
+			reg_date = NOW(),
+			role = #{role}
+		WHERE id = #{id}
+	</update>
+</mapper>

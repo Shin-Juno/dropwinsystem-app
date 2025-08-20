@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main_layout}">
+
+<head>
+    <title>DropWin - 인박스</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 필요한 CSS/JS 링크 추가 (Bootstrap, Font Awesome) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- WebSocket 및 Stomp.js 라이브러리 추가 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script th:src="@{/bootstrap/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/templatemo.js}"></script>
+    <script th:src="@{/js/custom.js}"></script>
+    <script th:src="@{/js/formcheck.js}"></script>
+    <script th:src="@{/js/itemDetail.js}"></script>
+    <style>
+        .unread-badge {
+            display: none; /* 기본적으로 숨김 */
+        }
+        /* 각 채팅방 항목을 카드처럼 보이게 하기 위한 스타일 */
+        .list-group-item.chat-card {
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .list-group-item.chat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        /* 상대방 ID의 글씨 크기를 키웁니다. */
+        .chat-card .partner-name {
+            font-size: 1.25rem; /* Bootstrap 폰트 크기 `h5`와 유사 */
+            font-weight: bold;
+        }
+        /* 마지막 메시지 정보의 글씨 크기를 키웁니다. */
+        .chat-card .last-message-info small {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content" class="container pb-5 mt-4">
+    <!-- 채팅 목록 전체의 폭을 줄이고 가운데 정렬 -->
+    <div style="max-width: 500px; margin: 0 auto;">
+        <h2 class="mb-4">나의 채팅 목록</h2>
+
+        <div class="list-group" id="chatRoomList">
+            <th:block th:if="${chatRooms != null and !#lists.isEmpty(chatRooms)}">
+                <div th:each="room : ${chatRooms}"
+                     class="list-group-item list-group-item-action d-flex flex-column align-items-start chat-card"
+                     th:data-chat-room-id="${room.id}">
+                    <!-- 상대방 ID를 동적으로 결정 -->
+                    <span th:with="otherUserId = (${room.user1Id == loggedInUserId} ? ${room.user2Id} : ${room.user1Id})" class="w-100 d-flex justify-content-between align-items-center">
+                        <a th:href="@{'/chat?partnerId=' + ${otherUserId}}" class="text-decoration-none text-dark d-flex align-items-center">
+                            <!-- 말풍선 아이콘 색상을 검은색으로 변경 -->
+                            <i class="fas fa-comment-dots me-2 text-dark"></i>
+                            <span class="partner-name" th:text="${otherUserId}"></span>
+                            <!-- 새 메시지 알림용 배지 (기본적으로 숨김) -->
+                            <span class="badge bg-danger ms-2 rounded-pill unread-badge">N</span>
+                        </a>
+                    </span>
+                    <div class="d-flex flex-column align-items-end last-message-info w-100 mt-2">
+                        <!-- 마지막 메시지 내용과 시간을 동적으로 업데이트하기 위해 별도의 span을 추가 -->
+                        <small class="text-muted last-message-content">마지막 메시지가 없습니다.</small>
+                        <small class="text-muted last-message-time mt-1" th:text="${#temporals.format(room.createdAt, 'yyyy-MM-dd HH:mm')}">2025-07-31 10:00</small>
+                    </div>
+                </div>
+            </th:block>
+            <th:block th:if="${chatRooms == null or #lists.isEmpty(chatRooms)}">
+                <div class="alert alert-info text-center" role="alert">
+                    아직 시작된 채팅방이 없습니다.
+                </div>
+            </th:block>
+        </div>
+    </div>
+
+    <!-- 스크립트 블록 -->
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    var loggedInUserId = /*[[${loggedInUserId}]]*/ 'defaultUser';
+
+    var stompClient = null;
+    var socket = new SockJS('/ws'); // WebSocket 엔드포인트
+    stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        console.log('STOMP Debug: WebSocket 연결 성공', frame);
+
+        // 사용자가 참여한 모든 채팅방에 대해 구독
+        var chatRooms = /*[[${chatRooms}]]*/ [];
+        chatRooms.forEach(function(room) {
+            var destination = '/topic/chat.room.' + room.id;
+            console.log('STOMP Debug: ' + destination + ' 토픽 구독');
+            stompClient.subscribe(destination, function (message) {
+                try {
+                    var receivedMessage = JSON.parse(message.body);
+                    console.log('STOMP Debug: 새 메시지 수신:', receivedMessage);
+
+                    // 메시지 수신자 확인
+                    if (receivedMessage.receiverId === loggedInUserId) {
+                        console.log('STOMP Debug: 알림 조건을 충족했습니다. 배지 및 메시지 업데이트를 시도합니다.');
+                        var roomElement = document.querySelector('[data-chat-room-id="' + receivedMessage.chatRoomId + '"]');
+                        if (roomElement) {
+                            // 1. 새 메시지 알림 배지 표시
+                            var unreadBadge = roomElement.querySelector('.unread-badge');
+                            if (unreadBadge) {
+                                unreadBadge.style.display = 'inline';
+                                console.log('STOMP Debug: 알림 배지를 성공적으로 표시했습니다.');
+                            }
+
+                            // 2. 마지막 메시지 내용 업데이트
+                            var lastMessageContent = roomElement.querySelector('.last-message-content');
+                            if (lastMessageContent) {
+                                lastMessageContent.textContent = receivedMessage.messageContent;
+                                console.log('STOMP Debug: 마지막 메시지 내용 업데이트 완료.');
+                            }
+
+                            // 3. 마지막 메시지 시간 업데이트
+                            var lastMessageTime = roomElement.querySelector('.last-message-time');
+                            if (lastMessageTime) {
+                                // 현재 시간으로 포맷하여 업데이트
+                                var now = new Date();
+                                lastMessageTime.textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                console.log('STOMP Debug: 마지막 메시지 시간 업데이트 완료.');
+                            }
+
+                        } else {
+                             console.error('STOMP Debug: chatRoomId에 해당하는 채팅방 요소를 찾을 수 없습니다:', receivedMessage.chatRoomId);
+                        }
+                    } else {
+                        console.log('STOMP Debug: 알림 조건을 충족하지 않았습니다. (나에게 온 메시지가 아님)');
+                    }
+                } catch (e) {
+                    console.error("STOMP Error: 수신 메시지 파싱 중 오류 발생", e);
+                }
+            });
+        });
+    });
+    /*]]>*/
+    </script>
+</div>
+</body>
+</html>

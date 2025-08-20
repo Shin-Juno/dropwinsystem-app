@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dropwinsystem.app.mapper.ItemMapper">
+
+	<update id="updateEndTime">
+		UPDATE items
+		SET end_time = #{endTime}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 물품 등록 맵핑 구문 -->
+	<insert id="insertItem"
+		parameterType="com.dropwinsystem.app.domain.Item"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO items (
+		category, name, description, start_price, buy_now_price,
+		end_time, image_paths, transaction_method, return_policy, status, seller_id,
+		current_price, bid_count <!-- bid_count 추가 -->
+		) VALUES (
+		#{category}, #{name}, #{description}, #{startPrice}, #{buyNowPrice},
+		#{endTime}, #{imagePaths}, #{transactionMethod}, #{returnPolicy}, #{status},
+		#{sellerId},
+		#{startPrice}, 0 <!-- 새 상품 등록 시 bid_count를 0으로 초기화 -->
+		)
+	</insert>
+
+	<!-- 물품 ID로 물품 조회 맵핑 구문 -->
+	<select id="selectItemById" parameterType="int"
+		resultType="com.dropwinsystem.app.domain.Item">
+		SELECT
+		id, category, name, description, start_price AS startPrice,
+		buy_now_price AS buyNowPrice, end_time AS endTime, image_paths AS imagePaths,
+		transaction_method AS transactionMethod, return_policy AS
+		returnPolicy,
+		status, created_at AS createdAt, seller_id AS sellerId,
+		current_price AS currentPrice,
+		bid_count AS bidCount <!-- bid_count 조회 추가 -->
+		FROM items
+		WHERE id = #{id}
+	</select>
+
+	<!-- 대기 중인 물품 목록 조회 맵핑 구문 -->
+	<select id="selectPendingItems"
+		resultType="com.dropwinsystem.app.domain.Item">
+		SELECT
+		id, category, name, description, start_price AS startPrice,
+		buy_now_price AS buyNowPrice, end_time AS endTime, image_paths AS imagePaths,
+		transaction_method AS transactionMethod, return_policy AS
+		returnPolicy,
+		status, created_at AS createdAt, seller_id AS sellerId,
+		current_price AS currentPrice,
+		bid_count AS bidCount <!-- bid_count 조회 추가 -->
+		FROM items
+		WHERE status = 'pending'
+		ORDER BY created_at DESC
+	</select>
+
+	<!-- 물품 상태를 업데이트하는 맵핑 구문 -->
+	<update id="updateItemStatus">
+		UPDATE items
+		SET status = #{status}
+		WHERE id = #{id}
+	</update>
+
+	<!-- current_price 업데이트 맵핑 구문 -->
+	<update id="updateCurrentPrice" parameterType="map">
+		UPDATE items
+		SET current_price = #{newPrice}
+		WHERE id = #{itemId}
+	</update>
+
+	<!-- bid_count를 1 증가시키는 맵핑 구문 -->
+	<update id="incrementBidCount" parameterType="int">
+		UPDATE items
+		SET bid_count = bid_count + 1
+		WHERE id = #{itemId}
+	</update>
+
+	<!-- 모든 물품 조회 맵핑 구문 -->
+	<select id="selectAllItems"
+		resultType="com.dropwinsystem.app.domain.Item">
+		SELECT
+		id, category, name, description, start_price AS startPrice,
+		buy_now_price AS buyNowPrice, end_time AS endTime, image_paths AS imagePaths,
+		transaction_method AS transactionMethod, return_policy AS
+		returnPolicy,
+		status, created_at AS createdAt, seller_id AS sellerId,
+		current_price AS currentPrice,
+		bid_count AS bidCount <!-- bid_count 조회 추가 -->
+		FROM items
+		ORDER BY created_at DESC
+	</select>
+
+</mapper>
