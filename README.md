@@ -29,10 +29,10 @@ Spring Boot, JPA, MyBatis를 사용하여 개발한 경매 시스템입니다.
 #### 1) 소스 코드 복제
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/dropwinsystem-app.git
+git clone https://github.com/Shin-Juno/dropwinsystem-app.git
 cd dropwinsystem-app
 ```
-> **Note**: `YOUR_USERNAME` 부분은 실제 GitHub 사용자 이름으로 변경해주세요.
+
 
 #### 2) 데이터베이스 생성 및 설정
 
