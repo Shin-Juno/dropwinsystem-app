@@ -1,7 +1,3 @@
-# -DropWin-
-DropWin은 *Drop(드랍)*과 *Win(이기다)*를 결합한 이름으로, 스포츠 장비를 실시간으로 입찰하고 경쟁 속에서 낙찰 받을 수 있는 스포츠 특화 경매 플랫폼이자 커뮤니티형 웹사이트
-
-
 # DropWinSystem 경매 애플리케이션
 
 Spring Boot, JPA, MyBatis를 사용하여 개발한 경매 시스템입니다.
